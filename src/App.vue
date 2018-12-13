@@ -1,30 +1,32 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
-    <div>
-      <el-button @click="startHacking">Start</el-button>
-    </div>
+    <el-container>
+      <el-aside style="margin-top: 20px; width: 200px;">
+        <div class="per_menu">
+          <router-link to="/list">Go to list</router-link>
+        </div>
+        <div class="per_menu">
+          <router-link to="/editor">Go to editor</router-link>
+        </div>
+      </el-aside>
+      <el-main>
+        Main
+        <router-view></router-view>
+      </el-main>
+    </el-container>
+    
   </div>
 </template>
 
+<style scoped>
+  .per_menu {
+    padding-bottom: 15px;
+  }
+</style>
+
 <script>
-export default {
-  methods: {
-    startHacking () {
-      this.$notify({
-        title: 'It works!',
-        type: 'success',
-        message: 'We\'ve laid the ground work for you. It\'s time for you to build something epic!',
-        duration: 5000
-      })
+  export default {
+    methods: {
     }
   }
-}
 </script>
-
-<style>
-#app {
-  font-family: Helvetica, sans-serif;
-  text-align: center;
-}
-</style>
