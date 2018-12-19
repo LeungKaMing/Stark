@@ -5,19 +5,27 @@
         {{menuElement.name}}
       </div>
     </draggable>
-    <draggable style="width: 300px; height: 300px; background: blue;" :list="contentList" :options="{group:'people'}" @sort="handleContentSort">
+    <draggable style="width: 300px; height: 300px; background: pink;" :list="contentList" :options="{group:'people'}" @sort="handleContentSort">
       <div v-for="contentElement in contentList" :key="contentElement.id">
         <template v-if="contentElement.name === 'button'">
-          <button>I am button.</button>          
+          <ButtonElement :data="buttonData" />
         </template>
         <template v-if="contentElement.name === 'img'">
-          <img src="https://avatars3.githubusercontent.com/u/18412359?s=40&v=4" alt="">
+          <ImageElement :data="imageData" />
         </template>
         <template v-if="contentElement.name === 'text'">
-          <p>I am text.</p>          
+          <TextElement :data="textData" />
         </template>
       </div>
     </draggable>
+    <div style="width: 300px; height: 300px; background: yellow;" @click="demo">
+      改变button组件传入属性
+      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+        <el-form-item label="活动名称" prop="name">
+          <el-input v-model="ruleForm.name"></el-input>
+        </el-form-item>
+      </el-form>
+    </div>
   </div>
 </template>
 
@@ -32,10 +40,16 @@
 </style>
 <script>
   import draggable from 'vuedraggable'
+  import ButtonElement from '../components/Button'
+  import ImageElement from '../components/Image'
+  import TextElement from '../components/Text'
 
   export default {
     data () {
       return {
+        buttonData: {text: 'I am button.'},
+        imageData: {imgSrc: 'https://avatars3.githubusercontent.com/u/18412359?s=40&v=4'},
+        textData: {text: 'I am text.'},
         menuList: [
           {
             id: 1,
@@ -51,13 +65,42 @@
           }
         ],
         contentList: [],
-        list: []
+        list: [],
+        // 右侧属性面版
+        ruleForm: {
+          name: ''
+        },
+        rules: {
+          name: [
+            { required: true, message: '请输入活动名称', trigger: 'blur' },
+            { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          ]
+        }
       }
     },
     components: {
-      draggable
+      draggable,
+      ButtonElement: () => import('../components/Button'),
+      ImageElement: () => import('../components/Image'),
+      TextElement: () => import('../components/Text')
     },
     methods: {
+      demo () {
+        this.$data.buttonData.text = 'I am changed.'
+      },
+      submitForm(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            alert('submit!');
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+      },
+      resetForm(formName) {
+        this.$refs[formName].resetFields();
+      },
       handleContentSort () {
         console.log(this.$data.contentList, '<<<<<<ready to set in datasource')
       }
