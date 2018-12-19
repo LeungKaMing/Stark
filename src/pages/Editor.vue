@@ -47,7 +47,15 @@
   export default {
     data () {
       return {
-        buttonData: {text: 'I am button.'},
+        buttonData: {
+          style: {
+            backgroundColor: 'green',
+            fontSize: '12px'
+          },
+          props: {
+            text: 'I am button.'
+          }
+        },
         imageData: {imgSrc: 'https://avatars3.githubusercontent.com/u/18412359?s=40&v=4'},
         textData: {text: 'I am text.'},
         menuList: [

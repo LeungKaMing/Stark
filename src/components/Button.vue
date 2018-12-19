@@ -1,6 +1,6 @@
 <template>
     <keep-alive>
-        <button>{{ data.text }}</button>
+        <button :style="data.style">{{ data.props.text }}</button>
     </keep-alive>
 </template>
 
