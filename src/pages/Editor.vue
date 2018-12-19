@@ -1,12 +1,24 @@
 <template>
-  <div style="display: flex; ">
-    <draggable style="width: 300px; height: 300px; background: red;" :list="menuList" :options="{group:'people'}">
+  <div style="display: flex;">
+    <!-- 菜单开始 -->
+    <draggable style="width: 300px; background: red;" :list="menuList" :options="{group:'people'}">
       <div class="menu__btn" v-for="menuElement in menuList" :key="menuElement.id">
         {{menuElement.name}}
       </div>
     </draggable>
-    <draggable style="width: 300px; height: 300px; background: pink;" :list="contentList" :options="{group:'people'}" @sort="handleContentSort">
-      <div v-for="contentElement in contentList" :key="contentElement.id">
+    <!-- 菜单结束 -->
+    <!-- 舞台区开始 -->
+    <draggable style="display: flex; flex-wrap: wrap; margin: 0 10%; min-width: 500px; height: 300px; background: pink;" :list="contentList" :options="{group:'people'}" @sort="handleContentSort">
+      <div style="min-width: 250px; height: 100px;" v-for="contentElement in contentList" :key="contentElement.id">
+        <template v-if="contentElement.name === 'container'">
+          <ContainerElement :data="containerData">
+            <draggable style="display: flex; flex-wrap: wrap; margin: 0 10%; width: 100px; height: 100px; background: red;" :list="containerList" :options="{group:'people'}">
+              <div class="menu__btn" v-for="containerElement in containerList" :key="containerElement.id">
+                {{containerElement.name}}
+              </div>
+            </draggable>
+          </ContainerElement>
+        </template>
         <template v-if="contentElement.name === 'button'">
           <ButtonElement :data="buttonData" />
         </template>
@@ -18,14 +30,17 @@
         </template>
       </div>
     </draggable>
-    <div style="width: 300px; height: 300px; background: yellow;" @click="demo">
-      改变button组件传入属性
+    <!-- 舞台区结束 -->
+    <!-- 面板开始 -->
+    <div style="width: 300px; height: 300px; background: yellow;">
+      <el-button @click="demo">提交</el-button>
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="活动名称" prop="name">
           <el-input v-model="ruleForm.name"></el-input>
         </el-form-item>
       </el-form>
     </div>
+    <!-- 面板结束 -->
   </div>
 </template>
 
@@ -38,8 +53,10 @@
     text-align: center;
   }
 </style>
+
 <script>
   import draggable from 'vuedraggable'
+  import ContainerElement from '../components/Container'
   import ButtonElement from '../components/Button'
   import ImageElement from '../components/Image'
   import TextElement from '../components/Text'
@@ -47,6 +64,12 @@
   export default {
     data () {
       return {
+        containerData: {
+          style: {
+            display: 'flex',
+            justifyContent: 'space-around'
+          }
+        },
         buttonData: {
           style: {
             backgroundColor: 'green',
@@ -70,10 +93,26 @@
           {
             id: 3,
             name: 'text'
-          }
+          },
+          {
+            id: 4,
+            name: 'container'
+          },
+          {
+            id: 5,
+            name: 'button'
+          },
+          {
+            id: 6,
+            name: 'img'
+          },
+          {
+            id: 7,
+            name: 'text'
+          },
         ],
         contentList: [],
-        list: [],
+        containerList: [],
         // 右侧属性面版
         ruleForm: {
           name: ''
@@ -88,6 +127,7 @@
     },
     components: {
       draggable,
+      ContainerElement: () => import('../components/Container'),
       ButtonElement: () => import('../components/Button'),
       ImageElement: () => import('../components/Image'),
       TextElement: () => import('../components/Text')
