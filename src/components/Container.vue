@@ -1,6 +1,6 @@
 <template>
     <keep-alive>
-        <div :style="data.style">
+        <div>
           <slot></slot>
         </div>
     </keep-alive>
@@ -12,9 +12,6 @@
 
 <script>
     export default {
-        props: {
-            data: Object
-        },
         data () {
             return {
             }
