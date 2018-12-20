@@ -13,21 +13,7 @@
     <draggable class="stage__bar" v-model="contentList" :options="{group:'people'}" @sort="handleContentSort">
       <div class="stage__bar--btn" v-for="contentElement in contentList" :key="contentElement.id">
         <template v-if="contentElement.name === 'container'">
-          <ContainerElement>
-            <draggable class="container__comp--box" v-model="containerList" :options="{group:'people'}" @sort="handleContainerSort">
-              <div class="container__comp--content" v-for="containerElement in containerList" :key="containerElement.id">
-                <template v-if="containerElement.name === 'button'">
-                  <ButtonElement :data="buttonData" />
-                </template>
-                <template v-if="containerElement.name === 'img'">
-                  <ImageElement :data="imageData" />
-                </template>
-                <template v-if="containerElement.name === 'text'">
-                  <TextElement :data="textData" />
-                </template>
-              </div>
-            </draggable>
-          </ContainerElement>
+          <ContainerElement/>
         </template>
         <template v-if="contentElement.name === 'button'">
           <ButtonElement :data="buttonData" />
@@ -43,7 +29,7 @@
     <!-- 舞台区结束 -->
     <!-- 面板开始 -->
     <div class="panel__bar">
-      <el-button @click="demo">提交</el-button>
+      <!-- <el-button>提交</el-button> -->
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="活动名称" prop="name">
           <el-input v-model="ruleForm.name"></el-input>
@@ -58,21 +44,6 @@
   .render__btn {
     line-height: 50px;
     background: aquamarine;
-    text-align: center;
-  }
-
-  /* 容器组件 */
-  .container__comp--box {
-    display: flex; 
-    /* flex-wrap: wrap;  */
-    width: 100%; 
-    height: 100px; 
-    background: red;
-  }
-  .container__comp--content {
-    width: 50%; 
-    height: 100px; 
-    line-height: 100px; 
     text-align: center;
   }
   
@@ -91,10 +62,10 @@
     height: 300px; 
     background: pink;
   }
-  .stage__bar--btn {
+  /* .stage__bar--btn {
     width: 100%; 
     height: 100px;
-  }
+  } */
   /* 面板 */
   .panel__bar {
     width: 300px; 
@@ -111,12 +82,19 @@
   import TextElement from '../components/Text'
   const nanoid = require('nanoid')
 
-  let tempList = []
+  // mock datasource
+  window.datasource = {
+    global: {},
+    layers: {},
+    pages: {},
+    events: {},
+    compons: []
+  }
 
   export default {
     data () {
       return {
-        length: 0,
+        initMenuList: [],
         buttonData: {
           style: {
             display: 'block',
@@ -172,7 +150,6 @@
           }
         ],
         contentList: [],
-        containerList: [],
         // 右侧属性面版
         ruleForm: {
           name: ''
@@ -193,13 +170,9 @@
       TextElement: () => import('../components/Text')
     },
     created () {
-      this.$data.length = this.$data.menuList.length
-      tempList = this.$data.menuList
+      this.$data.initMenuList = this.$data.menuList
     },
     methods: {
-      demo () {
-        this.$data.buttonData.text = 'I am changed.'
-      },
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
@@ -213,34 +186,20 @@
       resetForm(formName) {
         this.$refs[formName].resetFields();
       },
+      // core
+      // 从菜单拖动任意组件时，都立即生成一个全新的菜单      
       handleMenuSort () {
-        console.log('<<<<<<ready to set 0 in containerList')
         let temp = []
-        tempList.map((item) => {
-          // console.log(item, '<<<<<<nanoid()')
+        this.$data.initMenuList.map((item) => {
           temp.push({
             id: nanoid(),
             name: item.name
           })
         })
-        console.log(temp, 'try this')
-        // this.$data.contentList = []
+        this.$data.menuList = temp
       },
-      handleContentSort () {
-        console.log(this.$data.contentList, '<<<<<<ready to set in datasource')
-      },
-      handleContainerSort () {
-        let temp = []
-        if (this.$data.menuList.length !== this.$data.length) {
-          tempList.map((item) => {
-            // console.log(item, '<<<<<<nanoid()')
-            temp.push({
-              id: nanoid(),
-              name: item.name
-            })
-          })
-          this.$data.menuList = temp
-        }
+      handleContentSort (evt) {
+        console.log('<<<<<<<<<<<in content')
       }
     }
   }

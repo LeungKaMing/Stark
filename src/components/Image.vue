@@ -1,6 +1,6 @@
 <template>
     <keep-alive>
-        <img :style="data.style" :src="imgSrc" />
+        <img data-id="iamimg" :style="data.style" :src="imgSrc" />
     </keep-alive>
 </template>
 

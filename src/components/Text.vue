@@ -1,6 +1,6 @@
 <template>
     <keep-alive>
-        <p :style="data.style">{{ text }}</p>
+        <p data-id="iamtext" :style="data.style">{{ text }}</p>
     </keep-alive>
 </template>
 
