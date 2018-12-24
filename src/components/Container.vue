@@ -1,18 +1,18 @@
 <template>
   <keep-alive>
-    <draggable class="container__comp--box" v-model="data.compons" :options="{group:'people'}">
-      <div class="container__comp--content" v-for="containerElement in data.compons" :key="containerElement.id">
-        <template v-if="containerElement.name === 'button'">
-            <ButtonElement :data="containerElement.data" />
-        </template>
-        <template v-if="containerElement.name === 'img'">
-          <ImageElement :data="containerElement.data" />
-        </template>
-        <template v-if="containerElement.name === 'text'">
-          <TextElement :data="containerElement.data" />
-        </template>
-      </div>
-    </draggable>
+      <draggable :class="['container__comp--box']" :list="containerList" :options="{group:'people'}" @sort="handleContainerSort">
+        <div class="container__comp--content" v-for="containerElement in containerList" :key="Math.random()" @click="callFather(containerElement)">
+          <template v-if="containerElement.name === 'button'">
+              <ButtonElement :data="containerElement.data" />
+          </template>
+          <template v-if="containerElement.name === 'img'">
+            <ImageElement :data="containerElement.data" />
+          </template>
+          <template v-if="containerElement.name === 'text'">
+            <TextElement :data="containerElement.data" />
+          </template>
+        </div>
+      </draggable>
   </keep-alive>
 </template>
 
@@ -24,6 +24,9 @@
     width: 100%; 
     height: 100px; 
     background: red;
+  }
+  .container__comp-box--single {
+    justify-content: center;
   }
   .container__comp--content {
     width: 50%; 
@@ -38,55 +41,18 @@
 	import ButtonElement from '../components/Button'
   import ImageElement from '../components/Image'
   import TextElement from '../components/Text'
+  const nanoid = require('nanoid')
 
 	export default {
-		props: ['data'],
+		props: ['data', 'cb'],
 		data () {
 			return {
-				containerList: [],
-        buttonData: {
-          style: {
-            display: 'block',
-            width: '100%',
-            height: '100px',
-            backgroundColor: 'green',
-            fontSize: '12px'
-          },
-          props: {
-            text: 'I am button.'
-          }
-        },
-        imageData: {
-          style: {
-            width: '100%',
-            height: '100px',
-            backgroundColor: 'green',
-            fontSize: '12px'
-          },
-          props: {
-            imgSrc: 'https://avatars3.githubusercontent.com/u/18412359?s=40&v=4'
-          }
-        },
-        textData: {
-          style: {
-            width: '100%',
-            height: '100px',
-            lineHeight: '100px',
-            backgroundColor: 'green',
-            fontSize: '12px',
-            textAlign: 'center'
-          },
-          props: {
-            text: 'I am text.'
-          }
-        }
+        containerList: []
 			}
     },
-    // computed: {
-    //   style () {
-    //     return !!this.data ? this.data.style : {}
-    //   }
-    // },
+    created() {
+      containerList: []
+    },
     components: {
       draggable,
       ButtonElement: () => import('../components/Button'),
@@ -94,6 +60,22 @@
       TextElement: () => import('../components/Text')
     },
 		methods: {
+      callFather (curElement) {
+        if (curElement.name === 'container') {
+          // container不用展示面板
+          return
+        }
+        console.log('调用this.cb：', curElement)
+        // this.cb(curElement)
+      },
+      handleContainerSort () {
+        const self = this
+        window.datasource.compons.map((curItem, curIndex) => {
+          if (curItem.id === self.data.id) {
+            window.datasource.compons[curIndex].data = self.$data.containerList
+          }
+        })
+      }
 		}
 	}
 </script>

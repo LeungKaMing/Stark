@@ -13,7 +13,7 @@
     <draggable class="stage__bar" :list="contentList" :options="{group:'people'}">
       <div class="stage__bar--btn" v-for="contentElement in contentList" :key="contentElement.id" :data-wrapContent="JSON.stringify(contentElement)" @click="handleShowPanel(contentElement)">
         <template v-if="contentElement.name === 'container'">
-          <ContainerElement :data="contentElement.data" />
+          <ContainerElement :data="contentElement" :cb="demo" />
         </template>
         <template v-if="contentElement.name === 'button'">
           <ButtonElement :data="contentElement.data" />
@@ -229,6 +229,9 @@
       this.$data.contentList = window.datasource.compons  // 初始化渲染舞台
     },
     methods: {
+      demo () {
+        this.$data.panelSwitch = true
+      },
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
@@ -256,6 +259,10 @@
       },
       handleShowPanel (curElement) {
         const self = this
+        if (curElement.name === 'container') {
+          // container不用展示面板
+          return
+        }
         window.datasource.compons.map((item) => {
           if (item.id === curElement.id) {
             self.$data.panelSwitch = true
