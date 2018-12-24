@@ -1,19 +1,19 @@
 <template>
-    <keep-alive>
-        <draggable class="container__comp--box" v-model="containerList" :options="{group:'people'}" @sort="handleContainerSort">
-            <div class="container__comp--content" v-for="containerElement in containerList" :key="containerElement.id" :data-name="containerElement.name" :data-id="containerElement.id">
-            <template v-if="containerElement.name === 'button'">
-                <ButtonElement :data="buttonData" />
-            </template>
-						<template v-if="containerElement.name === 'img'">
-							<ImageElement :data="imageData" />
-						</template>
-						<template v-if="containerElement.name === 'text'">
-							<TextElement :data="textData" />
-						</template>
-            </div>
-        </draggable>
-    </keep-alive>
+  <keep-alive>
+    <draggable class="container__comp--box" v-model="data.compons" :options="{group:'people'}">
+      <div class="container__comp--content" v-for="containerElement in data.compons" :key="containerElement.id">
+        <template v-if="containerElement.name === 'button'">
+            <ButtonElement :data="containerElement.data" />
+        </template>
+        <template v-if="containerElement.name === 'img'">
+          <ImageElement :data="containerElement.data" />
+        </template>
+        <template v-if="containerElement.name === 'text'">
+          <TextElement :data="containerElement.data" />
+        </template>
+      </div>
+    </draggable>
+  </keep-alive>
 </template>
 
 <style scoped>
@@ -81,7 +81,12 @@
           }
         }
 			}
-		},
+    },
+    // computed: {
+    //   style () {
+    //     return !!this.data ? this.data.style : {}
+    //   }
+    // },
     components: {
       draggable,
       ButtonElement: () => import('../components/Button'),
@@ -89,48 +94,6 @@
       TextElement: () => import('../components/Text')
     },
 		methods: {
-			// core
-			// 无论是舞台区，还是容器组件，都需要把自身内部的子组件同步出来
-			handleContainerSort (evt) {
-				// console.log(evt, '<<<<<in container')
-				const list1 = document.getElementsByClassName('stage__bar--btn')
-				for (let i = 0; i < list1.length; i++) {
-					const list2 = list1[i].children
-					for (let j = 0; j < list2.length; j++) {
-						const list3 = list2[j].children
-						if (list3.length) {
-							for (let k = 0; k < list3.length; k++) {
-								console.log(list3[k].dataset.name, list3)	
-								// 这里太冗余了，考虑这个组件只关注这组件的数据，舞台只关注舞台数据，最后保存时统一整合到window.datasource.compons todo
-								// 还需要在这里遍历window.datasource.compons有无重复的id，有则不写入 todo
-								switch (list3[k].dataset.name) {
-									case 'button':
-										window.datasource.compons.push({
-											id: list3[k].dataset.id,
-											type: 'button',
-											value: list3[k].innerText
-										})
-										break
-									case 'text':
-										window.datasource.compons.push({
-											id: list3[k].dataset.id,
-											type: 'text',
-											value: list3[k].innerText
-										})
-										break
-									case 'image':
-										window.datasource.compons.push({
-											id: list3[k].dataset.id,
-											type: 'image',
-											value: list3[k].innerText
-										})
-										break
-								}
-							}
-						}
-					}
-				}
-			}
 		}
 	}
 </script>

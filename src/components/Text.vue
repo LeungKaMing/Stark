@@ -1,6 +1,6 @@
 <template>
     <keep-alive>
-        <p data-id="iamtext" :style="data.style">{{ text }}</p>
+        <p data-id="iamtext" :style="style">I am text.</p>
     </keep-alive>
 </template>
 
@@ -15,7 +15,11 @@
         },
         data () {
             return {
-                text: 'I am text.'
+            }
+        },
+        computed: {
+            style () {
+                return !!this.data ? this.data.style : {}
             }
         }
     }

@@ -1,6 +1,6 @@
 <template>
     <keep-alive>
-        <button data-id="iambutton" :style="data.style">{{ data.props.text }}</button>
+        <button data-id="iambutton" :style="style">i am button.</button>
     </keep-alive>
 </template>
 
@@ -16,6 +16,13 @@
         data () {
             return {
             }
+        },
+        computed: {
+            style: function () {
+                return !!this.data ? this.data.style : {}
+            }
+        },
+        craeted () {
         }
     }
 </script>

@@ -1,6 +1,6 @@
 <template>
     <keep-alive>
-        <img data-id="iamimg" :style="data.style" :src="imgSrc" />
+        <img data-id="iamimg" :style="style" :src="src" />
     </keep-alive>
 </template>
 
@@ -15,7 +15,14 @@
         },
         data () {
             return {
-                imgSrc: 'https://avatars3.githubusercontent.com/u/18412359?s=40&v=4'
+            }
+        },
+        computed: {
+            style () {
+                return !!this.data ? this.data.style : {}
+            },
+            src () {
+                return !!this.data ? this.data.props.imgSrc : {}
             }
         }
     }

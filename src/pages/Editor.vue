@@ -10,31 +10,34 @@
     </div>
     <!-- 菜单结束 -->
     <!-- 舞台区开始 -->
-    <draggable class="stage__bar" v-model="contentList" :options="{group:'people'}" @sort="handleContentSort">
-      <div class="stage__bar--btn" v-for="contentElement in contentList" :key="contentElement.id">
+    <draggable class="stage__bar" :list="contentList" :options="{group:'people'}">
+      <div class="stage__bar--btn" v-for="contentElement in contentList" :key="contentElement.id" :data-wrapContent="JSON.stringify(contentElement)" @click="handleShowPanel(contentElement)">
         <template v-if="contentElement.name === 'container'">
-          <ContainerElement/>
+          <ContainerElement :data="contentElement.data" />
         </template>
         <template v-if="contentElement.name === 'button'">
-          <ButtonElement :data="buttonData" />
+          <ButtonElement :data="contentElement.data" />
         </template>
         <template v-if="contentElement.name === 'img'">
-          <ImageElement :data="imageData" />
+          <ImageElement :data="contentElement.data" />
         </template>
         <template v-if="contentElement.name === 'text'">
-          <TextElement :data="textData" />
+          <TextElement :data="contentElement.data" />
         </template>
       </div>
     </draggable>
     <!-- 舞台区结束 -->
     <!-- 面板开始 -->
-    <div class="panel__bar">
+    <div class="panel__bar" v-if="panelSwitch">
+      <!-- 当前选中组件的属性，这个属性是用来同步到组件的 -->
+      {{curComponItem}}
+      <p @click="updateComponData(curComponItem)">测试改变组件的样式方法</p>
       <!-- <el-button>提交</el-button> -->
-      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-        <el-form-item label="活动名称" prop="name">
+      <!-- <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
+        <el-form-item label="属性值" prop="name">
           <el-input v-model="ruleForm.name"></el-input>
         </el-form-item>
-      </el-form>
+      </el-form> -->
     </div>
     <!-- 面板结束 -->
   </div>
@@ -82,75 +85,127 @@
   import TextElement from '../components/Text'
   const nanoid = require('nanoid')
 
-  // mock datasource
+  // mock datasource of current activity
   window.datasource = {
     global: {},
     layers: {},
     pages: {},
     events: {},
-    compons: []
-  }
-
-  export default {
-    data () {
-      return {
-        initMenuList: [],
-        buttonData: {
-          style: {
+    compons: [
+      {
+        id: nanoid(),
+        name: 'button',
+        data: {
+            style: {
             display: 'block',
             width: '100%',
             height: '100px',
-            backgroundColor: 'green',
+            backgroundColor: 'blue',
             fontSize: '12px'
-          },
-          props: {
+            },
+            props: {
             text: 'I am button.'
-          }
-        },
-        imageData: {
-          style: {
+            }
+        }
+      },
+      {
+        id: nanoid(),
+        name: 'img',
+        data: {
+            style: {
             width: '100%',
             height: '100px',
             backgroundColor: 'green',
             fontSize: '12px'
-          },
-          props: {
+            },
+            props: {
             imgSrc: 'https://avatars3.githubusercontent.com/u/18412359?s=40&v=4'
-          }
-        },
-        textData: {
-          style: {
+            }
+        }
+      },
+      {
+        id: nanoid(),
+        name: 'text',
+        data: {
+            style: {
             width: '100%',
             height: '100px',
             lineHeight: '100px',
             backgroundColor: 'green',
             fontSize: '12px',
             textAlign: 'center'
-          },
-          props: {
+            },
+            props: {
             text: 'I am text.'
-          }
-        },
+            }
+        }
+      },
+      {
+        id: nanoid(),
+        name: 'container',
+        data: {
+            style: {
+              width: '100%',
+              height: '100px',
+              lineHeight: '100px',
+              backgroundColor: 'green',
+              fontSize: '12px',
+              textAlign: 'center'
+            },
+            props: {
+              // text: 'I am text.'
+            },
+            compons: [
+              {
+                id: nanoid(),
+                name: 'button',
+                data: {
+                  style: {
+                    display: 'block',
+                    width: '100%',
+                    height: '100px',
+                    backgroundColor: 'pink',
+                    fontSize: '12px',
+                    color: '#fff'
+                  },
+                  props: {
+                    text: 'I am inner button.'
+                  }
+                }
+              }
+            ]
+        }
+      }
+    ]
+  }
+
+  // 这个插件很好用，只要把全局的变量跟拖拽的绑定了，那么只要拖拽顺序改变，也会同步到全局的变量
+  export default {
+    data () {
+      return {
+        initMenuList: [],
         menuList: [
           {
-            id: 1,
+            id: nanoid(),
             name: 'button'
           },
           {
-            id: 2,
+            id: nanoid(),
             name: 'img'
           },
           {
-            id: 3,
+            id: nanoid(),
             name: 'text'
           },
           {
-            id: 4,
+            id: nanoid(),
             name: 'container'
           }
         ],
         contentList: [],
         // 右侧属性面版
+        panelSwitch: false,
+        curComponItem: {},
         ruleForm: {
           name: ''
         },
@@ -170,7 +225,8 @@
       TextElement: () => import('../components/Text')
     },
     created () {
-      this.$data.initMenuList = this.$data.menuList
+      this.$data.initMenuList = this.$data.menuList // 临时存放菜单项，用于从菜单拖拉到舞台时，及时补充菜单项
+      this.$data.contentList = window.datasource.compons  // 初始化渲染舞台
     },
     methods: {
       submitForm(formName) {
@@ -198,8 +254,17 @@
         })
         this.$data.menuList = temp
       },
-      handleContentSort (evt) {
-        console.log('<<<<<<<<<<<in content')
+      handleShowPanel (curElement) {
+        const self = this
+        window.datasource.compons.map((item) => {
+          if (item.id === curElement.id) {
+            self.$data.panelSwitch = true
+            self.$data.curComponItem = item
+          }
+        })
+      },
+      updateComponData (curElement) {
+        console.log(curElement, '<<<<<<<准备改变该组件')
       }
     }
   }
