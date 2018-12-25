@@ -13,7 +13,7 @@
     <draggable class="stage__bar" :list="contentList" :options="{group:'people'}">
       <div class="stage__bar--btn" v-for="contentElement in contentList" :key="contentElement.id" @click="handleShowPanel(contentElement)">
         <template v-if="contentElement.name === 'container'">
-          <ContainerElement :data="contentElement" :cb="handleSonShowPanel" />
+          <ContainerElement :rootId="contentElement.id" :data="contentElement" :cb="handleSonShowPanel" />
         </template>
         <template v-if="contentElement.name === 'button'">
           <ButtonElement :data="contentElement.data" />
