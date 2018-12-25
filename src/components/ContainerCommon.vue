@@ -11,10 +11,6 @@
           <template v-if="containerElement.name === 'text'">
             <TextElement :data="containerElement.data" />
           </template>
-          <template v-if="containerElement.name === 'container'">
-            <!-- <ContainerElement :data="containerElement" :cb="this.cb"/> -->
-            组件自身递归嵌套
-          </template>
         </div>
       </draggable>
   </keep-alive>
@@ -42,8 +38,7 @@
 
 <script>
   import draggable from 'vuedraggable'
-  import ContainerElement from '../components/Container'
-	import ButtonElement from '../components/Button'
+  import ButtonElement from '../components/Button'
   import ImageElement from '../components/Image'
   import TextElement from '../components/Text'
   const nanoid = require('nanoid')
@@ -67,7 +62,6 @@
     },
     components: {
       draggable,
-      ContainerElement: () => import('../components/Container'),
       ButtonElement: () => import('../components/Button'),
       ImageElement: () => import('../components/Image'),
       TextElement: () => import('../components/Text')
@@ -84,9 +78,6 @@
       handleContainerSort () {
         // 监听到容器内元素有改变，马上同步到datasource
         const self = this
-        // 1. 需考虑组件内是否会继续嵌套 <= todo
-        console.log('in here：', self.data)
-        // 2. 只考虑容器组件内不嵌套容器组件
         window.datasource.compons.map((curItem, curIndex) => {
           if (curItem.id === self.data.id) {
             window.datasource.compons[curIndex].data = self.$data.containerList

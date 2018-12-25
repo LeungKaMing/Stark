@@ -11,9 +11,9 @@
     <!-- 菜单结束 -->
     <!-- 舞台区开始 -->
     <draggable class="stage__bar" :list="contentList" :options="{group:'people'}">
-      <div class="stage__bar--btn" v-for="contentElement in contentList" :key="contentElement.id" :data-wrapContent="JSON.stringify(contentElement)" @click="handleShowPanel(contentElement)">
+      <div class="stage__bar--btn" v-for="contentElement in contentList" :key="contentElement.id" @click="handleShowPanel(contentElement)">
         <template v-if="contentElement.name === 'container'">
-          <ContainerElement :data="contentElement" :cb="demo" />
+          <ContainerElement :data="contentElement" :cb="handleSonShowPanel" />
         </template>
         <template v-if="contentElement.name === 'button'">
           <ButtonElement :data="contentElement.data" />
@@ -53,7 +53,6 @@
   /* 菜单 */
   .menu__bar {
     width: 300px; 
-    background: red;
   }
   /* 舞台 */
   .stage__bar {
@@ -62,17 +61,11 @@
     margin: 0 10%; 
     max-width: 500px; 
     width: 500px;
-    height: 300px; 
     background: pink;
   }
-  /* .stage__bar--btn {
-    width: 100%; 
-    height: 100px;
-  } */
   /* 面板 */
   .panel__bar {
     width: 300px; 
-    height: 300px; 
     background: yellow;
   }
 </style>
@@ -229,8 +222,17 @@
       this.$data.contentList = window.datasource.compons  // 初始化渲染舞台
     },
     methods: {
-      demo () {
-        this.$data.panelSwitch = true
+      // 子组件将当前内部选中的元素告诉父组件，父组件展示面板，让用户修改属性后同步到子组件和datasource
+      handleSonShowPanel (curElement, sonId) {
+        const self = this
+        self.$data.panelSwitch = true
+        window.datasource.compons.map((item) => {
+          if (item.id === sonId) {
+            // 1. 找到跟子组件容器组件匹配的datasource索引项 ok
+            // 2. 将子组件容器组件点击选中的元素属性列出来 ok
+            self.$data.curComponItem = curElement
+          }
+        })
       },
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {

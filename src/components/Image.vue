@@ -1,6 +1,6 @@
 <template>
     <keep-alive>
-        <img data-id="iamimg" :style="style" :src="src" />
+        <img :style="style" :src="src" />
     </keep-alive>
 </template>
 
@@ -19,7 +19,7 @@
         },
         computed: {
             style () {
-                return !!this.data ? this.data.style : {}
+                return !!this.data ? this.data.style : {width: '100%', height: '100%'}
             },
             src () {
                 return !!this.data ? this.data.props.imgSrc : {}
