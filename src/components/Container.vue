@@ -1,7 +1,7 @@
 <template>
   <keep-alive>
       <draggable :class="['container__comp--box']" :list="containerList" :options="{group:'people'}" @sort="handleContainerSort">
-        <div class="container__comp--content" v-for="containerElement in containerList" :key="containerElement.id" @click="callFather(containerElement)">
+        <div class="container__comp--content" :data-helpId="containerElement.id" v-for="containerElement in containerList" :key="containerElement.id" @click="callFather(containerElement)">
           <template v-if="containerElement.name === 'button'">
               <ButtonElement :data="containerElement.data" />
           </template>
@@ -81,48 +81,31 @@
         }
         this.cb(curElement, this.data.id)
       },
-      recall (arrItem, arrIndex) {
-        const self = this
-        console.log(arrItem, `<<<<<<位于舞台的第${arrIndex}位置`)
-        console.log(self.data, `<<<<<<<<<位于当前行且现在正在操作的container`)
-        console.log(self.$data.containerList, `位于当前操作的container里面的元素`)
-        arrItem.data.map((curContainerItem, curContainerIndex) => {
-          // if (curContainerItem.id === self.data.id) {
-          //   // 锁定是当前行的哪一个container【一行同时也可以有很多个container组件】，接着还需要同步数据到window.datasource.compons对应的索引位置data字段
-          //   // 截止递归一次是可以的
-          //   window.datasource.compons[arrIndex].data[curContainerIndex] = self.$data.containerList
-          // }
-          if (curContainerItem instanceof Array) {
-            // 多层嵌套container
-            curContainerItem.map((curInnerContItem) => {
-              if (curInnerContItem.id === self.data.id) {
-                console.log('你正在操作的container是：', curInnerContItem)
-              }
-            })
-          }
-        })
-      },
       handleContainerSort () {
         // 监听到容器内元素有改变，马上同步到datasource
         const self = this
-        // 1. 需考虑组件内是否会继续嵌套 <= todo
-        // 2. 只考虑容器组件内不嵌套容器组件
-        console.log(self.data, self.$data.containerList)
-        window.datasource.compons.map((curItem, curIndex) => {
-          if (curItem.id === self.data.id) {
-            // 第一层嵌套self.rootId 跟 self.data.id 是还有关联的
-            // 传入的id跟window.datasource.compons的某项匹配到，就把当前数组对应项的data赋值当前拖拽区域的值
-            window.datasource.compons[curIndex].data = self.$data.containerList
+        console.log('紧记你现在触发这个方法是跟self.$data.containerList关联的, self.data > self.$data.containerList')
+        // console.log(self.rootId, '<<<<<<<<<self.rootId一定不会变，代笔最外层的container id')
+        console.log(self.data, '<<<<<<<<<self.data有可能一直在变，当前self.data是上级self.$data.containerList之中的')
+        console.log(self.$data.containerList, '<<<<<<<<<当前容器组件所具备的元素')
+        console.log(window.datasource.compons, '<<<<<<<<<全局看看')
+        window.datasource.compons.map((item, index) => {
+          if (item.id === self.data.id) {
+            window.datasource.compons[index].data.compons = self.$data.containerList
+          } else if (item.name === 'container') {
+            // 深层迭代
+            if (item.data && item.data.compons) {
+              item.data.compons.map((item2, index2) => {
+                if (item2.id === self.data.id) {
+                  console.log('>>>>>>equal: ', item2, self.data)
+                  console.log('bingo>>>>>>>>', window.datasource.compons[index].data.compons[index2], self.$data.containerList)
+                  window.datasource.compons[index].data.compons[index2] = self.$data.containerList
+                }
+              })
+            } else {
+              item.data = self.$data.containerList
+            }
           }
-          // 12.26 多层嵌套container 构思中
-          // else if (curItem.id === self.rootId) {
-          //   // 第二层嵌套开始self.rootId 跟 self.data.id 是没有关联的，self.data是指当前第二个嵌套的数组
-          //   // 常量不变self.rootId => self.data.id 在 self.rootId找，找不到就从window.datasource.compons一级一级找
-          //   console.log(self.rootId, self.data, '<<<<<on props')
-          //   // 锁定所在舞台的哪一行container组件，接着还需要锁定是当前行的哪一个container【一行同时也可以有很多个container组件】
-          //   // console.log('我已经锁定您现在操作的是第几行container：', curIndex) ok
-          //   self.recall(curItem, curIndex)
-          // }
         })
       }
 		}
