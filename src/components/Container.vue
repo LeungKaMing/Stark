@@ -12,7 +12,7 @@
             <TextElement :data="containerElement.data" />
           </template>
           <template v-if="containerElement.name === 'container'">
-            <ContainerElement :rootId="rootId" :data="containerElement" :cb="cb"/>
+            <ContainerElement :rootId="rootId" :data="wrapContainerData" :cb="cb"/>
           </template>
         </div>
       </draggable>
@@ -51,18 +51,24 @@
 		props: ['rootId', 'data', 'cb'],
 		data () {
 			return {
-        containerList: []
+        containerList: [],
+        wrapContainerData: ''
 			}
     },
     created () {
-      // 初始化渲染容器内元素
+      // // 初始化渲染容器内元素
       const self = this
+      if (!this.data) {
+        return
+      }
       if (this.data.data && this.data.data.compons) {
+        console.log('<<<<<新读取缓存')
         this.data.data.compons.map((curCompon) => {
           self.$data.containerList.push(curCompon)
         })
       } else {
-        self.$data.containerList = []
+        console.log('<<<<<<新没有读取缓存: ', self.data)
+        self.$data.containerList.push(self.data)
       }
     },
     components: {
@@ -81,31 +87,24 @@
         }
         this.cb(curElement, this.data.id)
       },
-      handleContainerSort () {
+      handleContainerSort (evt) {
         // 监听到容器内元素有改变，马上同步到datasource
         const self = this
-        console.log('紧记你现在触发这个方法是跟self.$data.containerList关联的, self.data > self.$data.containerList')
-        // console.log(self.rootId, '<<<<<<<<<self.rootId一定不会变，代笔最外层的container id')
-        console.log(self.data, '<<<<<<<<<self.data有可能一直在变，当前self.data是上级self.$data.containerList之中的')
-        console.log(self.$data.containerList, '<<<<<<<<<当前容器组件所具备的元素')
-        console.log(window.datasource.compons, '<<<<<<<<<全局看看')
-        window.datasource.compons.map((item, index) => {
-          if (item.id === self.data.id) {
-            window.datasource.compons[index].data.compons = self.$data.containerList
-          } else if (item.name === 'container') {
-            // 深层迭代
-            if (item.data && item.data.compons) {
-              item.data.compons.map((item2, index2) => {
-                if (item2.id === self.data.id) {
-                  console.log('>>>>>>equal: ', item2, self.data)
-                  console.log('bingo>>>>>>>>', window.datasource.compons[index].data.compons[index2], self.$data.containerList)
-                  window.datasource.compons[index].data.compons[index2] = self.$data.containerList
-                }
-              })
-            } else {
-              item.data = self.$data.containerList
+        // console.log('紧记你现在触发这个方法是跟self.$data.containerList关联的, self.data > self.$data.containerList: ', self.rootId)
+        // // console.log(self.rootId, '<<<<<<<<<self.rootId一定不会变，代笔最外层的container id')
+        console.log(self.data, '<<<<<<<<<旧self.data有可能一直在变，当前self.data是上级self.$data.containerList之中的')
+        console.log(self.$data.containerList, '<<<<<<<<<旧当前容器组件所具备的元素')
+        // 最新的
+        self.$data.containerList.map((item) => {
+          // 当前传入的参数【旧】
+          self.data.data.compons.map((item2) => {
+            if (item.id === item2.id) {
+              return
             }
-          }
+            let wrapData = {...item, data: {compons: []}}
+            console.log(wrapData, '<<<<<旧')
+            self.$data.wrapContainerData = wrapData // <== 传递到下级Container组件
+          })
         })
       }
 		}
