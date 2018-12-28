@@ -55,7 +55,7 @@
         </el-form-item>
         <el-form-item label="图标">
           <el-input v-model="buttonAttributes.icon" placeholder="el-icon-search" style="width: 87%;"></el-input>
-          <el-switch v-model="buttonAttributes.float" active-text="靠左" inactive-text="靠右"></el-switch>
+          <el-switch v-model="buttonAttributes.float" active-text="靠右" inactive-text="靠左"></el-switch>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="updateAttributes">更新组件</el-button>
@@ -236,7 +236,7 @@
           border_radius: '5px',
           background: '#a6e22e',
           icon: 'el-icon-check',
-          float: 'el-icon--right'
+          float: false
         },
         rules: {
           name: [
@@ -312,6 +312,16 @@
       updateComponData (curElement) {
         console.log(curElement, '<<<<<<<准备改变该组件')
       },
+      // 深拷贝array
+      deepCopy(arr) {
+          return arr.map((e) => {
+              if (typeof e === 'object') {
+                  return Object.assign({}, e)
+              } else {
+                  return e
+              }
+          })
+      },
       // 深拷贝obj
       deepCopyObj(arr) {
             if (typeof arr === 'object') {
@@ -322,10 +332,7 @@
       },
       updateAttributes() {
         //这里判断一下当前是哪个组件，这里先用button 组件举例，之后改成动态的
-        console.log("%c这个是当前选择的组件ID==>","color: darkred;text-shadow: 1px 1px 1px;",this.curElementId);
-        console.log("%c这个是要替换的组件属性==>","color: darkred;text-shadow: 1px 1px 1px;",this.buttonAttributes);
-
-        console.log(window.datasource);
+        console.log("%c这个是当前选择的组件ID==>","color: darkred;text-shadow: 1px 1px 1px;",this.curElementId)
         for (let compon of window.datasource.compons){
             if(compon.id == this.curElementId){
                 console.log("%c这个是当前现有的属性=>","color: darkred;text-shadow: 1px 1px 1px;",compon)
@@ -336,7 +343,6 @@
                 if(propName){
                   compon.data.props.text = propName;
                 }
-                this.buttonAttributes = {}
             }
         }
       }
