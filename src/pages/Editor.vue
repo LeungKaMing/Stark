@@ -30,14 +30,37 @@
     <!-- 面板开始 -->
     <div class="panel__bar" v-if="panelSwitch">
       <!-- 当前选中组件的属性，这个属性是用来同步到组件的 -->
-      {{curComponItem}}
-      <p @click="updateComponData(curComponItem)">测试改变组件的样式方法</p>
+      <!-- {{curComponItem}} -->
+      <!-- <p @click="updateComponData(curComponItem)">测试改变组件的样式方法</p> -->
       <!-- <el-button>提交</el-button> -->
-      <!-- <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
-        <el-form-item label="属性值" prop="name">
-          <el-input v-model="ruleForm.name"></el-input>
+      <!--这里的buttonAttributes是暂时的，之后会动态更改这个表单内容，还没想好怎么设计这个数据结构-->
+      <el-form ref="form" :model="buttonAttributes" label-width="120px">
+        <el-form-item label="名称">
+          <el-input v-model="buttonAttributes.value" placeholder="提交" style="width: 87%;"></el-input>
         </el-form-item>
-      </el-form> -->
+        <el-form-item label="宽">
+          <el-input v-model="buttonAttributes.width" placeholder="200px" style="width: 87%;"></el-input>
+        </el-form-item>
+        <el-form-item label="高">
+          <el-input v-model="buttonAttributes.height" placeholder="50px" style="width: 87%;"></el-input>
+        </el-form-item>
+        <el-form-item label="边框">
+          <el-input v-model="buttonAttributes.border" placeholder="1px solid #eee" style="width: 87%;"></el-input>
+        </el-form-item>
+        <el-form-item label="圆角">
+          <el-input v-model="buttonAttributes.border_radius" placeholder="3px" style="width: 87%;"></el-input>
+        </el-form-item>
+        <el-form-item label="背景色">
+          <el-input v-model="buttonAttributes.background" placeholder="#b3df53" style="width: 87%;"></el-input>
+        </el-form-item>
+        <el-form-item label="图标">
+          <el-input v-model="buttonAttributes.icon" placeholder="el-icon-search" style="width: 87%;"></el-input>
+          <el-switch v-model="buttonAttributes.float" active-text="靠左" inactive-text="靠右"></el-switch>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="updateAttributes">更新组件</el-button>
+        </el-form-item>
+      </el-form>
     </div>
     <!-- 面板结束 -->
   </div>
@@ -65,6 +88,7 @@
   }
   /* 面板 */
   .panel__bar {
+    padding: 20px 0;
     width: 300px; 
     background: yellow;
   }
@@ -176,6 +200,8 @@
   export default {
     data () {
       return {
+        //当前选中元素的ID,用来判断哪个是当前选中的元素，用来更改选中元素的属性
+        curElementId: '',
         initMenuList: [],
         menuList: [
           {
@@ -201,6 +227,16 @@
         curComponItem: {},
         ruleForm: {
           name: ''
+        },
+        buttonAttributes:{
+          value: '提交',
+          width: '200px',
+          height: '50px',
+          border: '1px',
+          border_radius: '5px',
+          background: '#a6e22e',
+          icon: 'el-icon-check',
+          float: 'el-icon--right'
         },
         rules: {
           name: [
@@ -260,6 +296,7 @@
         this.$data.menuList = temp
       },
       handleShowPanel (curElement) {
+        this.curElementId = curElement.id;
         const self = this
         if (curElement.name === 'container') {
           // container不用展示面板
@@ -274,6 +311,34 @@
       },
       updateComponData (curElement) {
         console.log(curElement, '<<<<<<<准备改变该组件')
+      },
+      // 深拷贝obj
+      deepCopyObj(arr) {
+            if (typeof arr === 'object') {
+                return Object.assign({}, arr)
+            } else {
+                return arr
+            }
+      },
+      updateAttributes() {
+        //这里判断一下当前是哪个组件，这里先用button 组件举例，之后改成动态的
+        console.log("%c这个是当前选择的组件ID==>","color: darkred;text-shadow: 1px 1px 1px;",this.curElementId);
+        console.log("%c这个是要替换的组件属性==>","color: darkred;text-shadow: 1px 1px 1px;",this.buttonAttributes);
+
+        console.log(window.datasource);
+        for (let compon of window.datasource.compons){
+            if(compon.id == this.curElementId){
+                console.log("%c这个是当前现有的属性=>","color: darkred;text-shadow: 1px 1px 1px;",compon)
+                compon.data.style = this.deepCopyObj(this.buttonAttributes);
+                let buttonAttr = this.buttonAttributes;
+                let propName = buttonAttr.value;
+                //设置按钮名称
+                if(propName){
+                  compon.data.props.text = propName;
+                }
+                this.buttonAttributes = {}
+            }
+        }
       }
     }
   }

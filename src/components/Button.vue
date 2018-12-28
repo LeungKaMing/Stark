@@ -1,6 +1,6 @@
 <template>
     <keep-alive>
-        <button :style="style">{{ text }}</button>
+        <button :style="style"><i :class="icon" v-show="leftHidden"></i>{{ text }}<i :class="icon" v-show="rightHidden"></i></button>
     </keep-alive>
 </template>
 
@@ -15,6 +15,8 @@
         },
         data () {
             return {
+                leftHidden: true,
+                rightHidden: true
             }
         },
         computed: {
@@ -23,6 +25,10 @@
             },
             text () {
                 return !!this.data ? this.data.props.text : 'init button'
+            },
+            icon () {
+                !!this.data.style.float ? (this.leftHidden = false,this.rightHidden = true) : (this.rightHidden = false,this.leftHidden = true)
+                return !!(this.data.style && this.data.style.icon) ? `${this.data.style.icon}` : '';
             }
         }
     }
