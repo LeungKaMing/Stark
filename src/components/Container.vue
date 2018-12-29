@@ -1,7 +1,7 @@
 <template>
   <keep-alive>
       <draggable :class="['container__comp--box']" :list="containerList" :options="{group:'people'}" @sort="handleContainerSort">
-        <div class="container__comp--content" :data-helpId="containerElement.id" v-for="containerElement in containerList" :key="containerElement.id" @click="callFather(containerElement)">
+        <div class="container__comp--content" :data-helpId="containerElement.id" v-for="containerElement, containerIndex in containerList" :key="containerElement.id" @click="callFather(containerElement)">
           <template v-if="containerElement.name === 'button'">
               <ButtonElement :data="containerElement.data" />
           </template>
@@ -12,7 +12,7 @@
             <TextElement :data="containerElement.data" />
           </template>
           <template v-if="containerElement.name === 'container'">
-            <ContainerElement :rootId="rootId" :data="wrapContainerData" :cb="cb"/>
+            <ContainerElement :rootId="containerIndex" :data="wrapContainerData" :cb="cb" :levelList="indexList"/>
           </template>
         </div>
       </draggable>
@@ -48,18 +48,25 @@
   const nanoid = require('nanoid')
 
 	export default {
-		props: ['rootId', 'data', 'cb'],
+		props: ['rootId', 'data', 'cb', 'levelList'],
 		data () {
 			return {
         containerList: [],
-        wrapContainerData: ''
+        wrapContainerData: '',
+        indexList: []
 			}
     },
     created () {
       // // 初始化渲染容器内元素
       const self = this
+      console.log(this.data, this.levelList, '<<<<<新渲染容器组件')
       if (!this.data) {
         return
+      }
+      // to fix
+      if (this.levelList.length) {
+        this.$data.indexList.push(this.rootId)
+        console.log(this.$data.indexList, '<<<<<<<拼好数组继续传递')
       }
       if (this.data.data && this.data.data.compons) {
         console.log('<<<<<新读取缓存')
@@ -94,17 +101,22 @@
         // // console.log(self.rootId, '<<<<<<<<<self.rootId一定不会变，代笔最外层的container id')
         console.log(self.data, '<<<<<<<<<旧self.data有可能一直在变，当前self.data是上级self.$data.containerList之中的')
         console.log(self.$data.containerList, '<<<<<<<<<旧当前容器组件所具备的元素')
+        console.log(self.rootId, '<<<<<<<<rootId')
         // 最新的
         self.$data.containerList.map((item) => {
           // 当前传入的参数【旧】
-          self.data.data.compons.map((item2) => {
-            if (item.id === item2.id) {
-              return
-            }
-            let wrapData = {...item, data: {compons: []}}
-            console.log(wrapData, '<<<<<旧')
-            self.$data.wrapContainerData = wrapData // <== 传递到下级Container组件
-          })
+          if (self.data) {
+            self.data.data.compons.map((item2) => {
+              if (item.id === item2.id) {
+                return
+              }
+              let wrapData = {...item, data: {compons: []}}
+              self.$data.wrapContainerData = wrapData // <== 传递到下级Container组件
+            })
+          } else {
+            let wrapData2 = {...item, data: {compons: []}}
+            self.$data.wrapContainerData = wrapData2
+          }
         })
       }
 		}

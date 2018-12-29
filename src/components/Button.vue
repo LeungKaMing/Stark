@@ -21,14 +21,18 @@
         },
         computed: {
             style () {
-                return !!this.data ? this.data.style : {width: '100%', height: '100%'}
+                return !!this.data && !!this.data.style ? this.data.style : {width: '100%', height: '100%'}
             },
             text () {
-                return !!this.data ? this.data.props.text : 'init button'
+                return !!this.data && !!this.data.props ? this.data.props.text : 'init button'
             },
             icon () {
-                !!this.data.style.float ? (this.leftHidden = false,this.rightHidden = true) : (this.rightHidden = false,this.leftHidden = true)
-                return !!(this.data.style && this.data.style.icon) ? `${this.data.style.icon}` : '';
+                if (!!this.data && !!this.data.style) {
+                    !!this.data.style.float ? (this.leftHidden = false,this.rightHidden = true) : (this.rightHidden = false,this.leftHidden = true)
+                    return !!(this.data.style && this.data.style.icon) ? `${this.data.style.icon}` : '';
+                } else {
+                    return ''
+                }
             }
         }
     }

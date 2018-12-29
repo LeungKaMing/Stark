@@ -11,9 +11,9 @@
     <!-- 菜单结束 -->
     <!-- 舞台区开始 -->
     <draggable class="stage__bar" :list="contentList" :options="{group:'people'}">
-      <div class="stage__bar--btn" v-for="contentElement in contentList" :key="contentElement.id" @click="handleShowPanel(contentElement)">
+      <div class="stage__bar--btn" v-for="contentElement, contentIndex in contentList" :key="contentElement.id" @click="handleShowPanel(contentElement)">
         <template v-if="contentElement.name === 'container'">
-          <ContainerElement :rootId="contentElement.id" :data="contentElement" :cb="handleSonShowPanel" />
+          <ContainerElement :rootId="contentIndex" :data="contentElement" :cb="handleSonShowPanel"  :levelList="[contentIndex]" />
         </template>
         <template v-if="contentElement.name === 'button'">
           <ButtonElement :data="contentElement.data" />
