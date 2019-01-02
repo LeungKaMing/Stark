@@ -13,7 +13,7 @@
     <draggable class="stage__bar" :list="contentList" :options="{group:'people'}">
       <div class="stage__bar--btn" v-for="contentElement, contentIndex in contentList" :key="contentElement.id" @click="handleShowPanel(contentElement)">
         <template v-if="contentElement.name === 'container'">
-          <ContainerElement :rootId="contentIndex" :data="contentElement" :cb="handleSonShowPanel"  :levelList="[contentIndex]" />
+          <ContainerElement :rootIndex="contentIndex" :data="contentElement" :cb="handleSonShowPanel" />
         </template>
         <template v-if="contentElement.name === 'button'">
           <ButtonElement :data="contentElement.data" />
@@ -193,7 +193,8 @@
             ]
         }
       }
-    ]
+    ],
+    temp: ''
   }
 
   // 这个插件很好用，只要把全局的变量跟拖拽的绑定了，那么只要拖拽顺序改变，也会同步到全局的变量
