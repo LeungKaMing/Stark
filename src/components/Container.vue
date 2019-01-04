@@ -2,7 +2,7 @@
   <keep-alive>
       <draggable :class="['container__comp--box']" :list="containerList" :options="{group:'people'}" @sort="handleContainerSort">
         <!-- 不允许容器组件再嵌套容器组件, 只能套一次 -->
-        <div :style="containerElement.name === 'container' ? 'display: none;' : 'flex-grow: 1;'" v-for="containerElement, containerIndex in containerList" :key="containerElement.id" @click="bingo(containerElement)">
+        <div :style="containerElement.name === 'container' ? 'display: none;' : 'flex-grow: 1;'" v-for="containerElement, containerIndex in containerList" :key="containerElement.id" @click="cb(containerElement, rootIndex)">
           <template class="container__comp--content"  v-if="containerElement.name === 'button'">
               <ButtonElement :data="containerElement.data" />
           </template>
@@ -53,11 +53,13 @@
 			}
     },
     created () {
-      // 初始化渲染容器内元素
       const self = this
-      this.data.data.compons.map((curCompon) => {
-        self.$data.containerList.push(curCompon)
-      })
+      if (this.data.data) {
+        // 页面渲染
+        this.data.data.compons.map((curCompon) => {
+          self.$data.containerList.push(curCompon)
+        })
+      }
     },
     components: {
       draggable,
@@ -67,11 +69,17 @@
       TextElement: () => import('../components/Text')
     },
 		methods: {
-      bingo () {
-
-      },
+      // 从容器组件选中元素后，同步到右侧面板
       handleContainerSort (evt) {
-        window.datasource.compons[this.rootIndex].data.compons = this.$data.containerList
+        if (window.datasource.compons[this.rootIndex].data) {
+          // 页面渲染
+          window.datasource.compons[this.rootIndex].data.compons = this.$data.containerList
+        } else {
+          // 菜单拖拽
+          window.datasource.compons[this.rootIndex].data = {
+            compons: this.$data.containerList
+          }
+        }
       }
 		}
 	}

@@ -1,5 +1,5 @@
 <template>
-  <div style="display: flex;">
+  <div class="editor__area">
     <!-- 菜单开始 -->
     <div class="menu__bar" >
       <draggable class="render__btn" v-model="menuList" :options="{group:'people'}" @sort="handleMenuSort">
@@ -30,32 +30,41 @@
     <!-- 面板开始 -->
     <div class="panel__bar" v-if="panelSwitch">
       <!-- 当前选中组件的属性，这个属性是用来同步到组件的 -->
-      <!-- {{curComponItem}} -->
+      {{curComponItem}}
       <!-- <p @click="updateComponData(curComponItem)">测试改变组件的样式方法</p> -->
       <!-- <el-button>提交</el-button> -->
-      <!--这里的buttonAttributes是暂时的，之后会动态更改这个表单内容，还没想好怎么设计这个数据结构-->
-      <el-form ref="form" :model="buttonAttributes" label-width="120px">
+      <!--这里的chooseElementInfo是暂时的，之后会动态更改这个表单内容，还没想好怎么设计这个数据结构-->
+      <el-form ref="form" :model="curComponItem" label-width="120px">
         <el-form-item label="名称">
-          <el-input v-model="buttonAttributes.value" placeholder="提交" style="width: 87%;"></el-input>
+          <el-input v-model="curComponItem.data.style.value" placeholder="提交" style="width: 87%;"></el-input>
         </el-form-item>
         <el-form-item label="宽">
-          <el-input v-model="buttonAttributes.width" placeholder="200px" style="width: 87%;"></el-input>
+          <el-input v-model="curComponItem.data.style.width" placeholder="200px" style="width: 87%;"></el-input>
         </el-form-item>
         <el-form-item label="高">
-          <el-input v-model="buttonAttributes.height" placeholder="50px" style="width: 87%;"></el-input>
+          <el-input v-model="curComponItem.data.style.height" placeholder="50px" style="width: 87%;"></el-input>
         </el-form-item>
-        <el-form-item label="边框">
-          <el-input v-model="buttonAttributes.border" placeholder="1px solid #eee" style="width: 87%;"></el-input>
-        </el-form-item>
-        <el-form-item label="圆角">
-          <el-input v-model="buttonAttributes.border_radius" placeholder="3px" style="width: 87%;"></el-input>
+        <el-form-item label="行高">
+          <el-input v-model="curComponItem.data.style.lineHeight" placeholder="50px" style="width: 87%;"></el-input>
         </el-form-item>
         <el-form-item label="背景色">
-          <el-input v-model="buttonAttributes.background" placeholder="#b3df53" style="width: 87%;"></el-input>
+          <el-input v-model="curComponItem.data.style.backgroundColor" placeholder="#b3df53" style="width: 87%;"></el-input>
+        </el-form-item>
+        <el-form-item label="字体大小">
+          <el-input v-model="curComponItem.data.style.fontSize" placeholder="#b3df53" style="width: 87%;"></el-input>
+        </el-form-item>
+        <el-form-item label="文字排布">
+          <el-input v-model="curComponItem.data.style.textAlign" placeholder="#b3df53" style="width: 87%;"></el-input>
+        </el-form-item>
+        <el-form-item label="边框">
+          <el-input v-model="curComponItem.data.style.border" placeholder="1px solid #eee" style="width: 87%;"></el-input>
+        </el-form-item>
+        <el-form-item label="圆角">
+          <el-input v-model="curComponItem.data.style.borderRadius" placeholder="3px" style="width: 87%;"></el-input>
         </el-form-item>
         <el-form-item label="图标">
-          <el-input v-model="buttonAttributes.icon" placeholder="el-icon-search" style="width: 87%;"></el-input>
-          <el-switch v-model="buttonAttributes.float" active-text="靠右" inactive-text="靠左"></el-switch>
+          <el-input v-model="curComponItem.data.style.icon" placeholder="el-icon-search" style="width: 87%;"></el-input>
+          <el-switch v-model="curComponItem.data.style.float" active-text="靠右" inactive-text="靠左"></el-switch>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="updateAttributes">更新组件</el-button>
@@ -67,6 +76,11 @@
 </template>
 
 <style scoped>
+  .editor__area {
+    display: flex; 
+    align-items: flex-start; 
+  }
+
   .render__btn {
     line-height: 50px;
     background: aquamarine;
@@ -76,6 +90,8 @@
   /* 菜单 */
   .menu__bar {
     width: 300px; 
+    height: 500px;
+    overflow: scroll;
   }
   /* 舞台 */
   .stage__bar {
@@ -84,12 +100,18 @@
     margin: 0 10%; 
     max-width: 500px; 
     width: 500px;
-    background: pink;
+    height: 500px;
+    overflow: scroll;
+  }
+  .stage__bar--btn {
+    height: 100px;
   }
   /* 面板 */
   .panel__bar {
     padding: 20px 0;
     width: 300px; 
+    height: 500px;
+    overflow: scroll;
     background: yellow;
   }
 </style>
@@ -193,8 +215,7 @@
             ]
         }
       }
-    ],
-    temp: ''
+    ]
   }
 
   // 这个插件很好用，只要把全局的变量跟拖拽的绑定了，那么只要拖拽顺序改变，也会同步到全局的变量
@@ -229,7 +250,7 @@
         ruleForm: {
           name: ''
         },
-        buttonAttributes:{
+        chooseElementInfo:{
           value: '提交',
           width: '200px',
           height: '50px',
@@ -259,15 +280,24 @@
       this.$data.contentList = window.datasource.compons  // 初始化渲染舞台
     },
     methods: {
-      // 子组件将当前内部选中的元素告诉父组件，父组件展示面板，让用户修改属性后同步到子组件和datasource
-      handleSonShowPanel (curElement, sonId) {
+      // 子组件将当前内部选中的元素告诉父组件，父组件展示面板，让用户修改属性后同步到子组件和datasource ok
+      handleSonShowPanel (curElement, parentId) {
         const self = this
-        self.$data.panelSwitch = true
         window.datasource.compons.map((item) => {
-          if (item.id === sonId) {
+          if (item.id === curElement.id) {
             // 1. 找到跟子组件容器组件匹配的datasource索引项 ok
             // 2. 将子组件容器组件点击选中的元素属性列出来 ok
+            self.$data.panelSwitch = true
             self.$data.curComponItem = curElement
+          } else {
+            if (window.datasource.compons[parentId].data && window.datasource.compons[parentId].data.compons.length) {
+              window.datasource.compons[parentId].data.compons.map((curSonElement) => {
+                if (curSonElement.id === curElement.id) {
+                  self.$data.panelSwitch = true
+                  self.$data.curComponItem = curElement
+                }
+              })
+            }
           }
         })
       },
@@ -297,16 +327,11 @@
         this.$data.menuList = temp
       },
       handleShowPanel (curElement) {
-        this.curElementId = curElement.id;
         const self = this
-        if (curElement.name === 'container') {
-          // container不用展示面板
-          return
-        }
         window.datasource.compons.map((item) => {
           if (item.id === curElement.id) {
             self.$data.panelSwitch = true
-            self.$data.curComponItem = item
+            self.$data.curComponItem = curElement
           }
         })
       },
@@ -337,8 +362,8 @@
         for (let compon of window.datasource.compons){
             if(compon.id == this.curElementId){
                 console.log("%c这个是当前现有的属性=>","color: darkred;text-shadow: 1px 1px 1px;",compon)
-                compon.data.style = this.deepCopyObj(this.buttonAttributes);
-                let buttonAttr = this.buttonAttributes;
+                compon.data.style = this.deepCopyObj(this.chooseElementInfo);
+                let buttonAttr = this.chooseElementInfo;
                 let propName = buttonAttr.value;
                 //设置按钮名称
                 if(propName){
