@@ -15,14 +15,8 @@
         <template v-if="contentElement.name === 'container'">
           <ContainerElement :rootIndex="contentIndex" :data="contentElement" :cb="handleSonShowPanel" />
         </template>
-        <template v-if="contentElement.name === 'button'">
-          <ButtonElement :data="contentElement.data" />
-        </template>
-        <template v-if="contentElement.name === 'img'">
-          <ImageElement :data="contentElement.data" />
-        </template>
-        <template v-if="contentElement.name === 'text'">
-          <TextElement :data="contentElement.data" />
+        <template v-else>
+          <component :is="`${contentElement.name.substring(0, 1).toUpperCase()}${contentElement.name.substring(1)}Element`" :data="contentElement.data"></component>
         </template>
       </div>
     </draggable>
@@ -30,46 +24,7 @@
     <!-- 面板开始 -->
     <div class="panel__bar" v-if="panelSwitch">
       <!-- 当前选中组件的属性，这个属性是用来同步到组件的 -->
-      {{curComponItem}}
-      <!-- <p @click="updateComponData(curComponItem)">测试改变组件的样式方法</p> -->
-      <!-- <el-button>提交</el-button> -->
-      <!--这里的chooseElementInfo是暂时的，之后会动态更改这个表单内容，还没想好怎么设计这个数据结构-->
-      <el-form ref="form" :model="curComponItem" label-width="120px">
-        <el-form-item label="名称">
-          <el-input v-model="curComponItem.data.style.value" placeholder="提交" style="width: 87%;"></el-input>
-        </el-form-item>
-        <el-form-item label="宽">
-          <el-input v-model="curComponItem.data.style.width" placeholder="200px" style="width: 87%;"></el-input>
-        </el-form-item>
-        <el-form-item label="高">
-          <el-input v-model="curComponItem.data.style.height" placeholder="50px" style="width: 87%;"></el-input>
-        </el-form-item>
-        <el-form-item label="行高">
-          <el-input v-model="curComponItem.data.style.lineHeight" placeholder="50px" style="width: 87%;"></el-input>
-        </el-form-item>
-        <el-form-item label="背景色">
-          <el-input v-model="curComponItem.data.style.backgroundColor" placeholder="#b3df53" style="width: 87%;"></el-input>
-        </el-form-item>
-        <el-form-item label="字体大小">
-          <el-input v-model="curComponItem.data.style.fontSize" placeholder="#b3df53" style="width: 87%;"></el-input>
-        </el-form-item>
-        <el-form-item label="文字排布">
-          <el-input v-model="curComponItem.data.style.textAlign" placeholder="#b3df53" style="width: 87%;"></el-input>
-        </el-form-item>
-        <el-form-item label="边框">
-          <el-input v-model="curComponItem.data.style.border" placeholder="1px solid #eee" style="width: 87%;"></el-input>
-        </el-form-item>
-        <el-form-item label="圆角">
-          <el-input v-model="curComponItem.data.style.borderRadius" placeholder="3px" style="width: 87%;"></el-input>
-        </el-form-item>
-        <el-form-item label="图标">
-          <el-input v-model="curComponItem.data.style.icon" placeholder="el-icon-search" style="width: 87%;"></el-input>
-          <el-switch v-model="curComponItem.data.style.float" active-text="靠右" inactive-text="靠左"></el-switch>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="updateAttributes">更新组件</el-button>
-        </el-form-item>
-      </el-form>
+      <component :is="`${curComponItem.name}Pannel`" :pannelData="curComponItem"></component>
     </div>
     <!-- 面板结束 -->
   </div>
@@ -91,7 +46,6 @@
   .menu__bar {
     width: 300px; 
     height: 500px;
-    overflow: scroll;
   }
   /* 舞台 */
   .stage__bar {
@@ -118,10 +72,6 @@
 
 <script>
   import draggable from 'vuedraggable'
-  import ContainerElement from '../components/Container'
-  import ButtonElement from '../components/Button'
-  import ImageElement from '../components/Image'
-  import TextElement from '../components/Text'
   const nanoid = require('nanoid')
 
   // mock datasource of current activity
@@ -149,7 +99,7 @@
       },
       {
         id: nanoid(),
-        name: 'img',
+        name: 'image',
         data: {
             style: {
             width: '100%',
@@ -232,7 +182,7 @@
           },
           {
             id: nanoid(),
-            name: 'img'
+            name: 'image'
           },
           {
             id: nanoid(),
@@ -247,6 +197,7 @@
         // 右侧属性面版
         panelSwitch: false,
         curComponItem: {},
+        currentPannel: '',
         ruleForm: {
           name: ''
         },
@@ -270,10 +221,16 @@
     },
     components: {
       draggable,
+      // 菜单区域
       ContainerElement: () => import('../components/Container'),
       ButtonElement: () => import('../components/Button'),
       ImageElement: () => import('../components/Image'),
-      TextElement: () => import('../components/Text')
+      TextElement: () => import('../components/Text'),
+      // 面板区域（考虑到默认从菜单拖拽过来的组件并没有属性，所以需要保留默认值，将这些对应面板抽离出来）
+      ContainerPannel: () => import('../components/ContainerPannel'),
+      ButtonPannel: () => import('../components/ButtonPannel'),
+      ImagePannel: () => import('../components/ImagePannel'),
+      TextPannel: () => import('../components/TextPannel')
     },
     created () {
       this.$data.initMenuList = this.$data.menuList // 临时存放菜单项，用于从菜单拖拉到舞台时，及时补充菜单项
