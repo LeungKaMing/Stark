@@ -58,7 +58,7 @@
     overflow: scroll;
   }
   .stage__bar--btn {
-    height: 100px;
+    /* height: 100px; */
   }
   /* 面板 */
   .panel__bar {
@@ -86,14 +86,18 @@
         name: 'button',
         data: {
             style: {
-            display: 'block',
-            width: '100%',
-            height: '100px',
-            backgroundColor: 'blue',
-            fontSize: '12px'
+              width: '100%',
+              height: '100px',
+              backgroundColor: 'blue',
+              fontSize: '12px',
+              textAlign: 'center',
+              border: '',
+              borderRadius: '',
+              icon: '',
+              float: '',
             },
             props: {
-            text: 'I am button.'
+              text: 'I am button.'
             }
         }
       },
@@ -102,13 +106,13 @@
         name: 'image',
         data: {
             style: {
-            width: '100%',
-            height: '100px',
-            backgroundColor: 'green',
-            fontSize: '12px'
+              width: '100%',
+              height: '100px',
+              backgroundColor: 'green',
+              fontSize: '12px'
             },
             props: {
-            imgSrc: 'https://avatars3.githubusercontent.com/u/18412359?s=40&v=4'
+              imgSrc: 'https://avatars3.githubusercontent.com/u/18412359?s=40&v=4'
             }
         }
       },
@@ -117,15 +121,15 @@
         name: 'text',
         data: {
             style: {
-            width: '100%',
-            height: '100px',
-            lineHeight: '100px',
-            backgroundColor: 'green',
-            fontSize: '12px',
-            textAlign: 'center'
+              width: '100%',
+              height: '100px',
+              lineHeight: '100px',
+              backgroundColor: 'green',
+              fontSize: '12px',
+              textAlign: 'center'
             },
             props: {
-            text: 'I am text.'
+              text: 'I am text.'
             }
         }
       },
@@ -172,51 +176,71 @@
   export default {
     data () {
       return {
-        //当前选中元素的ID,用来判断哪个是当前选中的元素，用来更改选中元素的属性
-        curElementId: '',
+        // 左侧菜单
         initMenuList: [],
         menuList: [
           {
             id: nanoid(),
-            name: 'button'
+            name: 'button',
+            data: {
+              style: {
+                width: '',
+                height: '',
+                backgroundColor: '',
+                fontSize: '',
+                textAlign: '',
+                border: '',
+                borderRadius: '',
+                icon: '',
+                float: ''
+              },
+              props: {
+                text: ''
+              }
+            }
           },
           {
             id: nanoid(),
-            name: 'image'
+            name: 'image',
+            data: {
+              style: {
+                width: '',
+                height: '',
+                backgroundColor: '',
+                fontSize: ''
+              },
+              props: {
+                imgSrc: ''
+              }
+            }
           },
           {
             id: nanoid(),
-            name: 'text'
+            name: 'text',
+            data: {
+              style: {
+                width: '',
+                height: '',
+                lineHeight: '',
+                backgroundColor: '',
+                fontSize: '',
+                textAlign: ''
+              },
+              props: {
+                text: ''
+              }
+            }
           },
           {
             id: nanoid(),
             name: 'container'
           }
         ],
+        // 中部舞台
         contentList: [],
         // 右侧属性面版
         panelSwitch: false,
-        curComponItem: {},
-        currentPannel: '',
-        ruleForm: {
-          name: ''
-        },
-        chooseElementInfo:{
-          value: '提交',
-          width: '200px',
-          height: '50px',
-          border: '1px',
-          border_radius: '5px',
-          background: '#a6e22e',
-          icon: 'el-icon-check',
-          float: false
-        },
-        rules: {
-          name: [
-            { required: true, message: '请输入活动名称', trigger: 'blur' },
-            { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
-          ]
-        }
+        curComponItem: {}
       }
     },
     components: {
@@ -237,6 +261,22 @@
       this.$data.contentList = window.datasource.compons  // 初始化渲染舞台
     },
     methods: {
+      // core
+      // 从菜单拖动任意组件时，都立即生成一个全新的菜单      
+      handleMenuSort () {
+        let temp = []
+        this.$data.initMenuList.map((item) => {
+          temp.push({
+            id: nanoid(),
+            name: item.name,
+            data: {
+              style: {},
+              props: {}
+            }
+          })
+        })
+        this.$data.menuList = temp
+      },
       // 子组件将当前内部选中的元素告诉父组件，父组件展示面板，让用户修改属性后同步到子组件和datasource ok
       handleSonShowPanel (curElement, parentId) {
         const self = this
@@ -258,76 +298,14 @@
           }
         })
       },
-      submitForm(formName) {
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            alert('submit!');
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
-        });
-      },
-      resetForm(formName) {
-        this.$refs[formName].resetFields();
-      },
-      // core
-      // 从菜单拖动任意组件时，都立即生成一个全新的菜单      
-      handleMenuSort () {
-        let temp = []
-        this.$data.initMenuList.map((item) => {
-          temp.push({
-            id: nanoid(),
-            name: item.name
-          })
-        })
-        this.$data.menuList = temp
-      },
       handleShowPanel (curElement) {
         const self = this
-        window.datasource.compons.map((item) => {
+        window.datasource.compons.map((item, index) => {
           if (item.id === curElement.id) {
             self.$data.panelSwitch = true
-            self.$data.curComponItem = curElement
+            self.$data.curComponItem = {...curElement}
           }
         })
-      },
-      updateComponData (curElement) {
-        console.log(curElement, '<<<<<<<准备改变该组件')
-      },
-      // 深拷贝array
-      deepCopy(arr) {
-          return arr.map((e) => {
-              if (typeof e === 'object') {
-                  return Object.assign({}, e)
-              } else {
-                  return e
-              }
-          })
-      },
-      // 深拷贝obj
-      deepCopyObj(arr) {
-            if (typeof arr === 'object') {
-                return Object.assign({}, arr)
-            } else {
-                return arr
-            }
-      },
-      updateAttributes() {
-        //这里判断一下当前是哪个组件，这里先用button 组件举例，之后改成动态的
-        console.log("%c这个是当前选择的组件ID==>","color: darkred;text-shadow: 1px 1px 1px;",this.curElementId)
-        for (let compon of window.datasource.compons){
-            if(compon.id == this.curElementId){
-                console.log("%c这个是当前现有的属性=>","color: darkred;text-shadow: 1px 1px 1px;",compon)
-                compon.data.style = this.deepCopyObj(this.chooseElementInfo);
-                let buttonAttr = this.chooseElementInfo;
-                let propName = buttonAttr.value;
-                //设置按钮名称
-                if(propName){
-                  compon.data.props.text = propName;
-                }
-            }
-        }
       }
     }
   }

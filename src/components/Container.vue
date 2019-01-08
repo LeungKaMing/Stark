@@ -39,7 +39,6 @@
 
 <script>
   import draggable from 'vuedraggable'
-  import ContainerElement from './Container'
 	import ButtonElement from '../components/Button'
   import ImageElement from '../components/Image'
   import TextElement from '../components/Text'
@@ -63,7 +62,6 @@
     },
     components: {
       draggable,
-      ContainerElement: () => import('../components/Container'),
       ButtonElement: () => import('../components/Button'),
       ImageElement: () => import('../components/Image'),
       TextElement: () => import('../components/Text')
