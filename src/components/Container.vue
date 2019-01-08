@@ -69,13 +69,22 @@
 		methods: {
       // 从容器组件选中元素后，同步到右侧面板
       handleContainerSort (evt) {
+        // 得把容器组件这个实例干掉，不能污染datasource！
+        let filterList = []
+        this.$data.containerList.map((filterItem) => {
+          if (filterItem.name === 'container') {
+            return false
+          } else {
+            filterList.push(filterItem)
+          }
+        })
         if (window.datasource.compons[this.rootIndex].data) {
           // 页面渲染
-          window.datasource.compons[this.rootIndex].data.compons = this.$data.containerList
-        } else {
+          window.datasource.compons[this.rootIndex].data.compons = filterList
+        } else if (!window.datasource.compons[this.rootIndex].data) {
           // 菜单拖拽
           window.datasource.compons[this.rootIndex].data = {
-            compons: this.$data.containerList
+            compons: filterList
           }
         }
       }
