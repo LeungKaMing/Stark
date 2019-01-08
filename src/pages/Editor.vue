@@ -11,7 +11,7 @@
     <!-- 菜单结束 -->
     <!-- 舞台区开始 -->
     <draggable class="stage__bar" :list="contentList" :options="{group:'people'}">
-      <div class="stage__bar--btn" v-for="contentElement, contentIndex in contentList" :key="contentElement.id" @click="handleShowPanel(contentElement)">
+      <div class="stage__bar--btn" v-for="contentElement, contentIndex in contentList" :key="contentElement.id" @click.stop="handleShowPanel(contentElement)">
         <template v-if="contentElement.name === 'container'">
           <ContainerElement :rootIndex="contentIndex" :data="contentElement" :cb="handleSonShowPanel" />
         </template>
@@ -22,7 +22,7 @@
     </draggable>
     <!-- 舞台区结束 -->
     <!-- 面板开始 -->
-    <div class="panel__bar" v-if="panelSwitch">
+    <div class="panel__bar" v-if="panelSwitch && curComponItem.name !== 'Container'">
       <!-- 当前选中组件的属性，这个属性是用来同步到组件的 -->
       <component :is="`${curComponItem.name}Pannel`" :pannelData="curComponItem"></component>
     </div>
@@ -137,17 +137,6 @@
         id: nanoid(),
         name: 'container',
         data: {
-            style: {
-              width: '100%',
-              height: '100px',
-              lineHeight: '100px',
-              backgroundColor: 'green',
-              fontSize: '12px',
-              textAlign: 'center'
-            },
-            props: {
-              // text: 'I am text.'
-            },
             compons: [
               {
                 id: nanoid(),
@@ -233,7 +222,10 @@
           },
           {
             id: nanoid(),
-            name: 'container'
+            name: 'container',
+            data: {
+              compons: []
+            }
           }
         ],
         // 中部舞台
@@ -251,7 +243,6 @@
       ImageElement: () => import('../components/Image'),
       TextElement: () => import('../components/Text'),
       // 面板区域（考虑到默认从菜单拖拽过来的组件并没有属性，所以需要保留默认值，将这些对应面板抽离出来）
-      ContainerPannel: () => import('../components/ContainerPannel'),
       ButtonPannel: () => import('../components/ButtonPannel'),
       ImagePannel: () => import('../components/ImagePannel'),
       TextPannel: () => import('../components/TextPannel')
@@ -271,7 +262,8 @@
             name: item.name,
             data: {
               style: {},
-              props: {}
+              props: {},
+              [item.name === 'container' ? 'compons' : ''] : item.name === 'container' ? [] : ''
             }
           })
         })
@@ -281,27 +273,24 @@
       handleSonShowPanel (curElement, parentId) {
         const self = this
         window.datasource.compons.map((item) => {
-          if (item.id === curElement.id) {
-            // 1. 找到跟子组件容器组件匹配的datasource索引项 ok
-            // 2. 将子组件容器组件点击选中的元素属性列出来 ok
-            self.$data.panelSwitch = true
-            self.$data.curComponItem = curElement
-          } else {
-            if (window.datasource.compons[parentId].data && window.datasource.compons[parentId].data.compons.length) {
-              window.datasource.compons[parentId].data.compons.map((curSonElement) => {
-                if (curSonElement.id === curElement.id) {
-                  self.$data.panelSwitch = true
-                  self.$data.curComponItem = curElement
-                }
-              })
-            }
+          if (window.datasource.compons[parentId].data && window.datasource.compons[parentId].data.compons.length) {
+            window.datasource.compons[parentId].data.compons.map((curSonElement) => {
+              if (curSonElement.id === curElement.id) {
+                self.$data.panelSwitch = true
+                self.$data.curComponItem = curElement
+              }
+            })
           }
         })
       },
       handleShowPanel (curElement) {
         const self = this
         window.datasource.compons.map((item, index) => {
-          if (item.id === curElement.id) {
+          if (item.name === 'container') {
+            // 排除掉容器组件这种情况，已经有特殊方法做处理展开面板
+            // 根据是否存在compons字段来判断面板显示的东西
+            return false
+          } else if (item.id === curElement.id) {
             self.$data.panelSwitch = true
             self.$data.curComponItem = {...curElement}
           }
