@@ -9,8 +9,7 @@
           <router-link to="/editor">Go to editor</router-link>
         </div>
       </el-aside>
-      <el-main style="padding-left: 0;">
-        Main
+      <el-main style="padding: 0;">
         <router-view></router-view>
       </el-main>
     </el-container>

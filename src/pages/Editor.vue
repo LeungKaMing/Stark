@@ -1,41 +1,55 @@
 <template>
   <div class="editor__area">
-    <!-- 菜单开始 -->
-    <div class="menu__bar" >
-      <draggable class="render__btn" v-model="menuList" :options="{group:'people'}" @sort="handleMenuSort">
-        <div v-for="menuElement in menuList" :key="menuElement.id">
-          {{menuElement.name}}
+    <el-header style="display: flex; justify-content: flex-end; padding: 0;">
+      <!-- 设置开始 -->
+      <el-button-group style="">
+        <el-button type="primary" icon="el-icon-printer" @click="handleDraft">草稿</el-button>
+        <el-button type="primary" icon="el-icon-edit" @click="handleSave">保存</el-button>
+        <el-button type="primary" icon="el-icon-upload" @click="handlePublish">发布</el-button>
+      </el-button-group>
+      <!-- 设置结束 -->
+    </el-header>
+    <el-container class="editor__area--box">
+      <!-- 菜单开始 -->
+      <div class="menu__bar" >
+        <draggable class="render__btn" v-model="menuList" :options="{group:'people'}" @sort="handleMenuSort">
+          <div v-for="menuElement in menuList" :key="menuElement.id">
+            {{menuElement.name}}
+          </div>
+        </draggable>
+      </div>
+      <!-- 菜单结束 -->
+      <!-- 舞台区开始 -->
+      <draggable class="stage__bar" :list="contentList" :options="{group:'people'}">
+        <div class="stage__bar--btn" v-for="contentElement, contentIndex in contentList" :key="contentElement.id" @click.stop="handleShowPanel(contentElement)">
+          <template v-if="contentElement.name === 'container'">
+            <ContainerElement :rootIndex="contentIndex" :data="contentElement" :cb="handleSonShowPanel" />
+          </template>
+          <template v-else>
+            <component :is="`${contentElement.name.substring(0, 1).toUpperCase()}${contentElement.name.substring(1)}Element`" :data="contentElement.data"></component>
+          </template>
         </div>
       </draggable>
-    </div>
-    <!-- 菜单结束 -->
-    <!-- 舞台区开始 -->
-    <draggable class="stage__bar" :list="contentList" :options="{group:'people'}">
-      <div class="stage__bar--btn" v-for="contentElement, contentIndex in contentList" :key="contentElement.id" @click.stop="handleShowPanel(contentElement)">
-        <template v-if="contentElement.name === 'container'">
-          <ContainerElement :rootIndex="contentIndex" :data="contentElement" :cb="handleSonShowPanel" />
-        </template>
-        <template v-else>
-          <component :is="`${contentElement.name.substring(0, 1).toUpperCase()}${contentElement.name.substring(1)}Element`" :data="contentElement.data"></component>
-        </template>
+      <!-- 舞台区结束 -->
+      <!-- 面板开始 -->
+      <div class="panel__bar" v-if="panelSwitch && curComponItem.name !== 'Container'">
+        <!-- 当前选中组件的属性，这个属性是用来同步到组件的 -->
+        <component :is="`${curComponItem.name}Pannel`" :pannelData="curComponItem"></component>
       </div>
-    </draggable>
-    <!-- 舞台区结束 -->
-    <!-- 面板开始 -->
-    <div class="panel__bar" v-if="panelSwitch && curComponItem.name !== 'Container'">
-      <!-- 当前选中组件的属性，这个属性是用来同步到组件的 -->
-      <component :is="`${curComponItem.name}Pannel`" :pannelData="curComponItem"></component>
-    </div>
-    <!-- 面板结束 -->
+      <!-- 面板结束 -->
+    </el-container>
   </div>
 </template>
 
 <style scoped>
   .editor__area {
     display: flex; 
+    flex-direction: column;
+  }
+  .editor__area--box {
+    display: flex; 
     align-items: flex-start; 
   }
-
   .render__btn {
     line-height: 50px;
     background: aquamarine;
@@ -71,6 +85,7 @@
 </style>
 
 <script>
+  import {sendServer} from '../assets/scripts/api'
   import draggable from 'vuedraggable'
   const nanoid = require('nanoid')
 
@@ -252,20 +267,34 @@
       this.$data.contentList = window.datasource.compons  // 初始化渲染舞台
     },
     methods: {
-      // core
+      handleDraft () {
+        sendServer({
+          firstName: 'Fred',
+          lastName: 'Flintstone'
+        })
+      },
+      handleSave () {
+        console.log('save>>>>>>', window.datasource)
+      },
+      handlePublish () {
+        console.log('publish>>>>>>', window.datasource)
+      },
       // 从菜单拖动任意组件时，都立即生成一个全新的菜单      
       handleMenuSort () {
         let temp = []
         this.$data.initMenuList.map((item) => {
-          temp.push({
+          let tempObj = {
             id: nanoid(),
             name: item.name,
             data: {
               style: {},
               props: {},
-              [item.name === 'container' ? 'compons' : ''] : item.name === 'container' ? [] : ''
             }
-          })
+          }
+          if (item.name === 'container') {
+            tempObj.data.compons = []
+          }
+          temp.push(tempObj)
         })
         this.$data.menuList = temp
       },
