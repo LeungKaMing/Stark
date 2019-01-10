@@ -5,7 +5,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import { Button, Notification, Container, Header, Aside, Main, Form, FormItem, Input, Select, Option, Radio, RadioGroup, Switch, ButtonGroup } from 'element-ui';
 import App from './App.vue'
 
-import './assets/common.css'
+import './assets/css/common.css'
 
 const List = () => import('./pages/List.vue')
 const Editor = () => import('./pages/Editor.vue')

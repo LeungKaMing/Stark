@@ -85,13 +85,15 @@
 </style>
 
 <script>
-  import {sendServer} from '../assets/scripts/api'
+  import {getDraftList, saveActivity, publishActivity} from '../assets/scripts/api'
   import draggable from 'vuedraggable'
   const nanoid = require('nanoid')
 
   // mock datasource of current activity
   window.datasource = {
-    global: {},
+    global: {
+      activityId: 1
+    },
     layers: {},
     pages: {},
     events: {},
@@ -268,16 +270,32 @@
     },
     methods: {
       handleDraft () {
-        sendServer({
-          firstName: 'Fred',
-          lastName: 'Flintstone'
+        getDraftList(window.datasource.global.activityId)
+        .then((res) => {
+          console.log(res, '<<<<<getDraftList')
+        }).catch((err) => {
+          console.log(err)
         })
       },
       handleSave () {
-        console.log('save>>>>>>', window.datasource)
+        saveActivity({
+          activityId: window.datasource.global.activityId,
+          dataSource: window.datasource
+        }).then((res) => {
+          console.log(res, '<<<<<saveActivity')
+        }).catch((err) => {
+          console.log(err)
+        })
       },
       handlePublish () {
-        console.log('publish>>>>>>', window.datasource)
+        publishActivity({
+          activityId: window.datasource.global.activityId,
+          dataSource: window.datasource
+        }).then((res) => {
+          console.log(res, '<<<<<publishActivity')
+        }).catch((err) => {
+          console.log(err)
+        })
       },
       // 从菜单拖动任意组件时，都立即生成一个全新的菜单      
       handleMenuSort () {
