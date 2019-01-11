@@ -2,12 +2,12 @@ const mongoose = require('mongoose')
 // 引入库结构
 const ActivityInfoSchema = require('./schema').activityInfoSchema
 // 创建模型
-const ActivityInfoModel = mongoose.model('User', ActivityInfoSchema)
+const ActivityInfoModel = mongoose.model('Activity', ActivityInfoSchema)
 
 function switchModel (schema) {
 		let model
     switch (schema) {
-			case 'user':
+			case 'activity':
 				model = ActivityInfoModel
 				break
 		}
@@ -19,9 +19,9 @@ const utils = {
 	 * 插入
 	 */
 	insertData: (info, schema) => {
-		return new Promise((resolve, reject) => {
-			let cb = (obj) => {
-				switchModel(schema)(obj).save((err, res) => {
+		if (info) {
+			return new Promise((resolve, reject) => {
+				switchModel(schema)(JSON.parse(info)).save((err, res) => {
 					if (err) {
 						console.log(`插入数据错误:${err}`)
 						reject(err)
@@ -29,17 +29,9 @@ const utils = {
 						console.log(`插入数据成功:${res}`)
 						resolve(res)
 					}
-				}) 
-			}
-			if (info instanceof Array) {
-				// 数组
-				for (let i = 0; i < info.length; i++) {
-					cb(info[i])
-				}
-			} else {
-				cb (info)
-			}
-		})
+				})
+			})
+		}
 	},
 
 	/**

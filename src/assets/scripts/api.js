@@ -24,14 +24,14 @@ function fetchAPI (ajaxObj) {
 export function getDraftList (activityId) {
 	return fetchAPI({
 		method: 'get',
-		url: `/getDraftList?id=${activityId}`
+		url: `/v1/getDraftList?id=${activityId}`
 	})
 }
 
 export function saveActivity (data) {
 	return fetchAPI({
 		method: 'post',
-		url: '/saveActivity',
+		url: '/v1/saveActivity',
 		data
 	})
 }
@@ -39,7 +39,7 @@ export function saveActivity (data) {
 export function publishActivity (data) {
 	return fetchAPI({
 		method: 'post',
-		url: '/publishActivity',
+		url: '/v1/publishActivity',
 		data
 	})
 }

@@ -1,52 +1,61 @@
-const querystring = require('querystring');
 const controllers = require('../controllers/index')
+const querystring = require('querystring');
 
 module.exports = async (req, res) => {
-	// 构建统一返回主体
-	let responseSubject = {
-		code: '',
-		msg: '',
-		data: {}
-	}
 	if (req.method === 'OPTIONS') {
 		res.end('ok')
 	}
 	// 获取草稿列表
-	if (/\/getDraftList\?(id=\w+)/ig.test(req.url)) {
-		const urlObj = req.url.replace(/\/getDraftList\?(id=\w+)/ig, '$1')
-		console.log('需要传递给数据库做查询的', querystring.parse(urlObj))
-		responseSubject.code = 200
-		responseSubject.msg = '获取草稿列表成功'
-		responseSubject.data = ''
-		console.log('这里要做控制层controllers: ', responseSubject)
-		res.end(JSON.stringify(responseSubject))
+	if (/\/v1\/getDraftList\?(id=\w+)/ig.test(req.url)) {
+		let urlObj = req.url.replace(/\/v1\/getDraftList\?(id=\w+)/ig, '$1')
+		urlObj = querystring.parse(urlObj, '&')
+		// 将控制层的接口返回
+		let resultObj = await controllers( 
+			{
+				method: 'GET',	// 接口请求方法，restfulAPI
+				msg: '获取草稿列表',	// 接口描述
+				url: req.url,	// 请求地址
+				data: urlObj	// 请求数据
+			}
+		)
+		res.end(JSON.stringify(resultObj))
 	}
 	// 保存活动
-	if (req.url === '/saveActivity') {
+	if (req.url === '/v1/saveActivity') {
 		let result = ''
 		req.on('data', (chunk) => {
 			result += chunk
 		})
-		req.on('end', () => {
-			responseSubject.code = 200
-			responseSubject.msg = '保存活动成功'
-			responseSubject.data = result
-			console.log('这里要做控制层controllers: ', responseSubject)
-			res.end(JSON.stringify(responseSubject))
+		req.on('end', async () => {
+			// 将控制层的接口返回
+			let resultObj = await controllers( 
+				{
+					method: 'POST',	// 接口请求方法，restfulAPI
+					msg: '保存活动',	// 接口描述
+					url: req.url,	// 请求地址
+					data: result	// 请求数据
+				}
+			)
+			// res.end(JSON.stringify(responseSubject))
 		})
 	}
 	// 发布活动
-	if (req.url === '/publishActivity') {
+	if (req.url === '/v1/publishActivity') {
 		let result = ''
 		req.on('data', (chunk) => {
 			result += chunk
 		})
 		req.on('end', () => {
-			responseSubject.code = 200
-			responseSubject.msg = '发布活动成功'
-			responseSubject.data = result
-			console.log('这里要做控制层controllers: ', responseSubject)
-			res.end(JSON.stringify(responseSubject))
+			// 将控制层的接口返回
+			let resultObj = await controllers( 
+				{
+					method: 'POST',	// 接口请求方法，restfulAPI
+					msg: '保存活动',	// 接口描述
+					url: req.url,	// 请求地址
+					data: result	// 请求数据
+				}
+			)
+			// res.end(JSON.stringify(responseSubject))
 		})
 	}
 }
