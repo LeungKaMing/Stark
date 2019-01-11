@@ -45,7 +45,7 @@ module.exports = async (req, res) => {
 		req.on('data', (chunk) => {
 			result += chunk
 		})
-		req.on('end', () => {
+		req.on('end', async () => {
 			// 将控制层的接口返回
 			let resultObj = await controllers( 
 				{
