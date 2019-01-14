@@ -4,14 +4,30 @@
  */
 const models = require('../models/index')
 
-module.exports = async (params) => {
-    // 操作模型层
-    console.log(params, '<<<<<<<<<<最后传给模型层的应该是纯粹的, 所有逻辑判断应该在逻辑层做掉')
-    let resultObj = await models(params.data)
-    if (resultObj) {
-        params.code = 200
-        params.msg = `${params.msg}成功！`
-        params.data = resultObj.data
-    }
-    return params
+const resultObj = {
+    getDraftList: async (params) => {
+        const modelResult = await models[params.url](params.data)
+        return {
+            code: 200,
+            msg: `${params.msg}成功！`,
+            data: modelResult.data
+        }
+    },
+    saveActivity: async (params) => {
+        const modelResult = await models[params.url](params.data)
+        return {
+            code: 200,
+            msg: `${params.msg}成功！`,
+            data: modelResult.data
+        }
+    },
+    publishActivity: async (params) => {
+        const modelResult = await models[params.url](params.data)
+        return {
+            code: 200,
+            msg: `${params.msg}成功！`,
+            data: modelResult.data
+        }
+    },
 }
+module.exports = resultObj

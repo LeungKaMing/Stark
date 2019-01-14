@@ -49,7 +49,7 @@ module.exports = async (req, res) => {
 					method: req.method,	// 接口请求方法，restfulAPI
 					msg: '保存活动',	// 接口描述
 					url: req.url,	// 请求地址
-					data: result	// 请求数据
+					data: JSON.parse(result)	// 请求数据
 				}
 			)
 			// res.end(JSON.stringify(responseSubject))
