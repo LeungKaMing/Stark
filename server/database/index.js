@@ -21,7 +21,7 @@ const utils = {
 	insertData: (info, schema) => {
 		if (info) {
 			return new Promise((resolve, reject) => {
-				switchModel(schema)(JSON.parse(info)).save((err, res) => {
+				switchModel(schema)(info).save((err, res) => {
 					if (err) {
 						console.log(`插入数据错误:${err}`)
 						reject(err)

@@ -7,12 +7,12 @@ module.exports = async (params) => {
 		code: '',
 		msg: '',
 		data: {}
-    }
-    // 操作逻辑层
-    let resultObj = await services(params)
-    // 将逻辑层的结果返回
-    responseSubject.code = resultObj.code
-    responseSubject.msg = resultObj.msg
-    responseSubject.data = resultObj.data
-    return responseSubject
+  }
+  // 操作逻辑层
+  let resultObj = await services(params)
+  // 将逻辑层的结果返回
+  responseSubject.code = resultObj.code
+  responseSubject.msg = resultObj.msg
+  responseSubject.data = resultObj.data
+  return responseSubject
 }

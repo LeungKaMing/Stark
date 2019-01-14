@@ -6,7 +6,8 @@ const models = require('../models/index')
 
 module.exports = async (params) => {
     // 操作模型层
-    let resultObj = await models(params)
+    console.log(params, '<<<<<<<<<<最后传给模型层的应该是纯粹的, 所有逻辑判断应该在逻辑层做掉')
+    let resultObj = await models(params.data)
     if (resultObj) {
         params.code = 200
         params.msg = `${params.msg}成功！`

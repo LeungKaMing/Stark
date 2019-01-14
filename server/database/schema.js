@@ -11,7 +11,8 @@ let activityInfoSchema = new Schema({
     modifyDate: {type: String},   // 修改时间
     modifyUser: {type: String},   // 修改人
     onlineTime: {type: String},   // 上线时间
-    offlineTime: {type: String}   // 下线时间
+    offlineTime: {type: String},   // 下线时间
+    dataSource: {type: Object}  // 数据源
 })
 
 

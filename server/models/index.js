@@ -3,6 +3,6 @@
 const dbUtils = require('../database/index.js')
 module.exports = async (params) => {
     // 操作数据库
-    let resultObj = await dbUtils.insertData(params.data, 'activity')
+    let resultObj = await dbUtils.insertData(params, 'activity')
     return resultObj
 }
