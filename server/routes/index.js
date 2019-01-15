@@ -9,11 +9,11 @@ module.exports = async (req, res) => {
 		let urlObj = req.url.replace(/\/v1\/getDraftList\?(id=\w+)/ig, '$1')
 		urlObj = querystring.parse(urlObj, '&')
 		// 将控制层的接口返回
-		let resultObj = await controllers( 
+		const resultObj = await controllers( 
 			{
 				method: req.method,	// 接口请求方法，restfulAPI
 				msg: '获取草稿列表',	// 接口描述
-				url: req.url,	// 请求地址
+				url: req.url.replace(/\/v1\//, ''),	// 请求地址
 				data: urlObj	// 请求数据
 			}
 		)
@@ -26,15 +26,15 @@ module.exports = async (req, res) => {
 		})
 		req.on('end', async () => {
 			// 将控制层的接口返回
-			let resultObj = await controllers( 
+			const resultObj = await controllers( 
 				{
 					method: req.method,	// 接口请求方法，restfulAPI
 					msg: '保存活动',	// 接口描述
-					url: req.url,	// 请求地址
+					url: req.url.replace(/\/v1\//, ''),	// 请求地址
 					data: JSON.parse(result)	// 请求数据
 				}
 			)
-			// res.end(JSON.stringify(responseSubject))
+			res.end(JSON.stringify(resultObj))
 		})
 	} else if (req.url === '/v1/publishActivity') {
 		// 发布活动
@@ -44,15 +44,15 @@ module.exports = async (req, res) => {
 		})
 		req.on('end', async () => {
 			// 将控制层的接口返回
-			let resultObj = await controllers( 
+			const resultObj = await controllers( 
 				{
 					method: req.method,	// 接口请求方法，restfulAPI
 					msg: '保存活动',	// 接口描述
-					url: req.url,	// 请求地址
+					url: req.url.replace(/\/v1\//, ''),	// 请求地址
 					data: JSON.parse(result)	// 请求数据
 				}
 			)
-			// res.end(JSON.stringify(responseSubject))
+			res.end(JSON.stringify(resultObj))
 		})
 	}
 }

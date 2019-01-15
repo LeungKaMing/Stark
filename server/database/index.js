@@ -24,10 +24,10 @@ const utils = {
 				switchModel(schema)(info).save((err, res) => {
 					if (err) {
 						console.log(`插入数据错误:${err}`)
-						reject(err)
+						reject('insert fail')
 					} else {
 						console.log(`插入数据成功:${res}`)
-						resolve(res)
+						resolve('insert done')
 					}
 				})
 			})
@@ -66,10 +66,10 @@ const utils = {
 			switchModel(schema).remove(info, (err, res) => {
 				if (err) {
 					console.log(`服务器出错${err}`)
-					reject(err)
+					reject('del fail')
 				} else {
 					console.log(`已删除${res}`)
-					resolve(res)
+					resolve('del done')
 				}
 			})
 		})
@@ -83,9 +83,9 @@ const utils = {
 			switchModel(schema).update(condition, updateOption, (err, res) => {
 				if (err) {
 					console.log(`服务器出错${err}`)
-					reject(err)
+					reject('update fail')
 				} else {
-					resolve(res)
+					resolve('update done')
 				}
 			})
 		})
@@ -99,9 +99,9 @@ const utils = {
 			switchModel(schema).findByIdAndUpdate(id, updateInfo, (err, res) => {
 				if (err) {
 					console.log(`服务器出错${err}`)
-					reject(err)
+					reject('update fail')
 				} else {
-					resolve(res)
+					resolve('update done')
 				}
 			})
 		})
@@ -115,10 +115,10 @@ const utils = {
 			switchModel(schema).findOneAndUpdate(JSON.parse(oldCondition), newCondition, (err, res) => {
 				if (err) {
 					console.log('服务器出错')
-					reject(err)
+					reject('update fail')
 				} else {
 					console.log(res, '更新成功')
-					resolve(res)
+					resolve('update done')
 				}
 			})
 		})

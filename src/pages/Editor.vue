@@ -280,7 +280,7 @@
       handleSave () {
         saveActivity({
           activityId: window.datasource.global.activityId,
-          dataSource: window.datasource
+          dataSource: JSON.stringify(window.datasource)
         }).then((res) => {
           console.log(res, '<<<<<saveActivity')
         }).catch((err) => {
@@ -290,7 +290,7 @@
       handlePublish () {
         publishActivity({
           activityId: window.datasource.global.activityId,
-          dataSource: window.datasource
+          dataSource: JSON.stringify(window.datasource)
         }).then((res) => {
           console.log(res, '<<<<<publishActivity')
         }).catch((err) => {

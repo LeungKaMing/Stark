@@ -10,7 +10,7 @@ const resultObj = {
         return {
             code: 200,
             msg: `${params.msg}成功！`,
-            data: modelResult.data
+            data: modelResult
         }
     },
     saveActivity: async (params) => {
@@ -18,7 +18,7 @@ const resultObj = {
         return {
             code: 200,
             msg: `${params.msg}成功！`,
-            data: modelResult.data
+            data: modelResult
         }
     },
     publishActivity: async (params) => {
@@ -26,7 +26,7 @@ const resultObj = {
         return {
             code: 200,
             msg: `${params.msg}成功！`,
-            data: modelResult.data
+            data: modelResult
         }
     },
 }
