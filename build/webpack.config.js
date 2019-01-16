@@ -9,11 +9,14 @@ module.exports = (options = {}) => ({
     vendor: './src/vendor',
     index: './src/main.js'
   },
+  devServer: {
+    contentBase: './dist'
+  },
   output: {
     path: resolve(__dirname, 'dist'),
-    filename: options.dev ? '[name].js' : '[name].js?[chunkhash]',
-    chunkFilename: '[id].js?[chunkhash]',
-    publicPath: options.dev ? '/assets/' : publicPath
+    filename: options.dev ? '[name].js' : '[name].js?[hash]',
+    chunkFilename: '[id].js?[hash]',
+    publicPath: options.dev ? '/dist/' : publicPath
   },
   module: {
     rules: [{
