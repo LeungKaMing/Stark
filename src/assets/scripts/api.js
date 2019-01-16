@@ -9,9 +9,6 @@ function fetchAPI (ajaxObj) {
 		axios[ajaxObj.method](ajaxObj.url, ajaxObj.data)
 			.then((res) => {
 				if (res.data.code === 200) {
-					if (res.data.data) {
-						res.data.data = JSON.parse(res.data.data)
-					}
 					resolve(res.data.data)
 				}
 			})
@@ -21,10 +18,10 @@ function fetchAPI (ajaxObj) {
 	})
 }
 
-export function getDraftList (activityId) {
+export function getDraftList (data) {
 	return fetchAPI({
 		method: 'get',
-		url: `/v1/getDraftList?id=${activityId}`
+		url: `/v1/getDraftList?activityId=${data.activityId}`
 	})
 }
 

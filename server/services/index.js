@@ -9,24 +9,24 @@ const resultObj = {
         const modelResult = await models[params.url](params.data)
         return {
             code: 200,
-            msg: `${params.msg}成功！`,
-            data: modelResult
+            data: modelResult,
+            msg: params.msg
         }
     },
     saveActivity: async (params) => {
         const modelResult = await models[params.url](params.data)
         return {
             code: 200,
-            msg: `${params.msg}成功！`,
-            data: modelResult
+            data: modelResult,
+            msg: params.msg
         }
     },
     publishActivity: async (params) => {
         const modelResult = await models[params.url](params.data)
         return {
             code: 200,
-            msg: `${params.msg}成功！`,
-            data: modelResult
+            data: modelResult,
+            msg: params.msg
         }
     },
 }

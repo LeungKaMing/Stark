@@ -2,7 +2,7 @@ const mongoose = require('./connect')
 const Schema = mongoose.Schema
 
 // 用户基本信息库
-let activityInfoSchema = new Schema({
+const activityInfoSchema = new Schema({
     activityId: {type: String},   // 用户Id
     activityName: {type: String},   // 用户名
     activityData: {type: String},   // 活动数据

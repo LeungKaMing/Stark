@@ -5,7 +5,7 @@ const ActivityInfoSchema = require('./schema').activityInfoSchema
 const ActivityInfoModel = mongoose.model('Activity', ActivityInfoSchema)
 
 function switchModel (schema) {
-		let model
+	let model
     switch (schema) {
 			case 'activity':
 				model = ActivityInfoModel
@@ -24,10 +24,10 @@ const utils = {
 				switchModel(schema)(info).save((err, res) => {
 					if (err) {
 						console.log(`插入数据错误:${err}`)
-						reject('insert fail')
+						reject('fail')
 					} else {
 						console.log(`插入数据成功:${res}`)
-						resolve('insert done')
+						resolve('done')
 					}
 				})
 			})
@@ -37,16 +37,16 @@ const utils = {
 	/**
 	 * 查找
 	 */
-	find: (info, schema) => {
+	find: (id, schema) => {
 		return new Promise((resolve, reject) => {
-			switchModel(schema).find(info, (err, res) => {
+			switchModel(schema).findById(id, (err, res) => {
 				if (err) {
 					console.log(`服务器出错:${err}`)
-					reject(err)
+					reject('fail')
 				} else {
 					if (!res.length) {
 						console.log('没有此数据')
-						resolve(res)
+						reject('fail')
 					} else {
 						// console.log(`查询到啊:${res}`)
 						resolve(res)
@@ -66,10 +66,10 @@ const utils = {
 			switchModel(schema).remove(info, (err, res) => {
 				if (err) {
 					console.log(`服务器出错${err}`)
-					reject('del fail')
+					reject('fail')
 				} else {
 					console.log(`已删除${res}`)
-					resolve('del done')
+					resolve('done')
 				}
 			})
 		})
@@ -83,9 +83,9 @@ const utils = {
 			switchModel(schema).update(condition, updateOption, (err, res) => {
 				if (err) {
 					console.log(`服务器出错${err}`)
-					reject('update fail')
+					reject('fail')
 				} else {
-					resolve('update done')
+					resolve('done')
 				}
 			})
 		})
@@ -96,12 +96,12 @@ const utils = {
 	 */
 	findByIdAndUpdate: (id, updateInfo, schema) => {
 		return new Promise((resolve, reject) => {
-			switchModel(schema).findByIdAndUpdate(id, updateInfo, (err, res) => {
+			switchModel(schema).findByIdAndUpdate(id, {dataSource: updateInfo}, (err, res) => {
 				if (err) {
 					console.log(`服务器出错${err}`)
-					reject('update fail')
+					reject('fail')
 				} else {
-					resolve('update done')
+					resolve('done')
 				}
 			})
 		})
@@ -115,20 +115,14 @@ const utils = {
 			switchModel(schema).findOneAndUpdate(JSON.parse(oldCondition), newCondition, (err, res) => {
 				if (err) {
 					console.log('服务器出错')
-					reject('update fail')
+					reject('fail')
 				} else {
 					console.log(res, '更新成功')
-					resolve('update done')
+					resolve('done')
 				}
 			})
 		})
 	}
 }
-// utils.insertData({userName: 'ljm', password: '19920926ljm'}, 'user')
-// find()
-// find({'userage': {$gte: 21, $lte: 35}})
-// del()
-// update()
-// findByIdAndUpdate('5a44cbad2b3a69783a0ccb83')
-// findOneAndUpdate()
+
 module.exports = utils

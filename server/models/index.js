@@ -3,13 +3,14 @@
 const dbUtils = require('../database/index.js')
 const resultObj = {
     getDraftList: async (params) => {
-        return await dbUtils.insertData(params, 'activity')
+        return await dbUtils.find(params.activityId, 'activity')
     },
     saveActivity: async (params) => {
-        return await dbUtils.insertData(params, 'activity')
+        return await dbUtils.findByIdAndUpdate(params.activityId, params.dataSource, 'activity')
     },
     publishActivity: async (params) => {
-        return await dbUtils.insertData(params, 'activity')
+        // 调用发布接口应该也要找到当前活动id的项，然后更新一遍
+        return await dbUtils.findByIdAndUpdate(params.activityId, params.dataSource, 'activity')
     },
 }
 

@@ -31,7 +31,8 @@ Vue.prototype.$notify = Notification;
 const router = new VueRouter({
   routes: [
     { path: '/list', component: List },
-    { path: '/editor', component: Editor }
+    { path: '/editor', component: Editor },
+    { path: '*', redirect: '/list' }
   ]
 })
 new Vue({

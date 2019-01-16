@@ -86,14 +86,13 @@
 
 <script>
   import {getDraftList, saveActivity, publishActivity} from '../assets/scripts/api'
+  import {getQueryString} from '../assets/scripts/utils'
   import draggable from 'vuedraggable'
   const nanoid = require('nanoid')
 
   // mock datasource of current activity
   window.datasource = {
-    global: {
-      activityId: 1
-    },
+    global: {},
     layers: {},
     pages: {},
     events: {},
@@ -270,7 +269,9 @@
     },
     methods: {
       handleDraft () {
-        getDraftList(window.datasource.global.activityId)
+        getDraftList({
+          activityId: getQueryString().activityId
+        })
         .then((res) => {
           console.log(res, '<<<<<getDraftList')
         }).catch((err) => {
@@ -279,7 +280,7 @@
       },
       handleSave () {
         saveActivity({
-          activityId: window.datasource.global.activityId,
+          activityId: getQueryString().activityId,
           dataSource: JSON.stringify(window.datasource)
         }).then((res) => {
           console.log(res, '<<<<<saveActivity')
@@ -289,7 +290,7 @@
       },
       handlePublish () {
         publishActivity({
-          activityId: window.datasource.global.activityId,
+          activityId: getQueryString().activityId,
           dataSource: JSON.stringify(window.datasource)
         }).then((res) => {
           console.log(res, '<<<<<publishActivity')
