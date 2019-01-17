@@ -5,9 +5,9 @@
         <div class="per_menu">
           <router-link to="/list">Go to list</router-link>
         </div>
-        <div class="per_menu">
+        <!-- <div class="per_menu">
           <router-link to="/editor">Go to editor</router-link>
-        </div>
+        </div> -->
       </el-aside>
       <el-main style="padding: 0;">
         <router-view></router-view>

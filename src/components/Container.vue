@@ -6,7 +6,7 @@
           <template class="container__comp--content"  v-if="containerElement.name === 'button'">
               <ButtonElement :data="containerElement.data" />
           </template>
-          <template class="container__comp--content"  v-if="containerElement.name === 'img'">
+          <template class="container__comp--content"  v-if="containerElement.name === 'image'">
             <ImageElement :data="containerElement.data" />
           </template>
           <template class="container__comp--content"  v-if="containerElement.name === 'text'">

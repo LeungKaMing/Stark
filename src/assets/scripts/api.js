@@ -9,7 +9,9 @@ function fetchAPI (ajaxObj) {
 		axios[ajaxObj.method](ajaxObj.url, ajaxObj.data)
 			.then((res) => {
 				if (res.data.code === 200) {
-					resolve(res.data.data)
+					resolve(ajaxObj.onSuccess(res.data))
+				} else {
+					resolve(ajaxObj.onFailure(res.data))
 				}
 			})
 			.catch((err) => {
@@ -18,25 +20,44 @@ function fetchAPI (ajaxObj) {
 	})
 }
 
-export function getDraftList (data) {
+export function getActivityList (params) {
+	const {onSuccess, onFailure, data} = params
 	return fetchAPI({
 		method: 'get',
-		url: `/v1/getDraftList?activityId=${data.activityId}`
+		url: data.activityId ? `/v1/getActivityList?activityId=${data.activityId}` : `/v1/getActivityList`,
+		onSuccess,
+		onFailure
 	})
 }
 
-export function saveActivity (data) {
+export function getDraftList (params) {
+	const {onSuccess, onFailure, data} = params
+	return fetchAPI({
+		method: 'get',
+		url: `/v1/getDraftList?activityId=${data.activityId}`,
+		onSuccess,
+		onFailure
+	})
+}
+
+export function saveActivity (params) {
+	const {onSuccess, onFailure, data} = params
 	return fetchAPI({
 		method: 'post',
 		url: '/v1/saveActivity',
-		data
+		data,
+		onSuccess,
+		onFailure
 	})
 }
 
-export function publishActivity (data) {
+export function publishActivity (params) {
+	const {onSuccess, onFailure, data} = params
 	return fetchAPI({
 		method: 'post',
 		url: '/v1/publishActivity',
-		data
+		data,
+		onSuccess,
+		onFailure
 	})
 }

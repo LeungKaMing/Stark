@@ -2,7 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 // import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import { Button, Notification, Container, Header, Aside, Main, Form, FormItem, Input, Select, Option, Radio, RadioGroup, Switch, ButtonGroup } from 'element-ui';
+import { Button, Notification, Container, Header, Aside, Main, Form, FormItem, Input, Select, Option, Radio, RadioGroup, Switch, ButtonGroup, Table, TableColumn } from 'element-ui';
 import App from './App.vue'
 
 import './assets/css/common.css'
@@ -26,6 +26,8 @@ Vue.use(Option);
 Vue.use(Radio);
 Vue.use(RadioGroup);
 Vue.use(Switch);
+Vue.use(Table);
+Vue.use(TableColumn);
 Vue.prototype.$notify = Notification;
 
 const router = new VueRouter({

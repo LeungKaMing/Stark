@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 const ActivityInfoSchema = require('./schema').activityInfoSchema
 // 创建模型
 const ActivityInfoModel = mongoose.model('Activity', ActivityInfoSchema)
+const nanoid = require('nanoid')
 
 function switchModel (schema) {
 	let model
@@ -15,6 +16,18 @@ function switchModel (schema) {
 }
 
 const utils = {
+	/**
+	 * test
+	 */
+	test: (info, schema) => {
+		switchModel(schema)({activityId: nanoid(), dataSource: info}).save((err, res) => {
+			if (err) {
+				console.log(`插入数据错误:${err}`)
+			} else {
+				console.log(`插入数据成功:${res}`)
+			}
+		})
+	},
 	/**
 	 * 插入
 	 */
@@ -33,22 +46,21 @@ const utils = {
 			})
 		}
 	},
-
 	/**
-	 * 查找
+	 * 查询所有数据
 	 */
-	find: (id, schema) => {
+	find: (info, schema) => {
 		return new Promise((resolve, reject) => {
-			switchModel(schema).findById(id, (err, res) => {
+			switchModel(schema).find(info, (err, res) => {
 				if (err) {
 					console.log(`服务器出错:${err}`)
 					reject('fail')
 				} else {
-					if (!res.length) {
-						console.log('没有此数据')
-						reject('fail')
+					if (!res) {
+						console.log('没有数据')
+						resolve(res)
 					} else {
-						// console.log(`查询到啊:${res}`)
+						console.log(`查询数据成功:${res}`)
 						resolve(res)
 					}
 				}
@@ -78,51 +90,26 @@ const utils = {
 	/**
 	 * 更新
 	 */
-	update: (condition, updateOption, schema) => {
+	findByIdAndUpdate: (info, schema) => {
 		return new Promise((resolve, reject) => {
-			switchModel(schema).update(condition, updateOption, (err, res) => {
-				if (err) {
-					console.log(`服务器出错${err}`)
-					reject('fail')
+			utils.find({
+				activityId: info.activityId
+			}, schema)
+			.then((res) => {
+				if (res.length) {
+					console.log('更新：', res)
 				} else {
-					resolve('done')
-				}
-			})
-		})
-	},
-
-	/**
-	 * 更新
-	 */
-	findByIdAndUpdate: (id, updateInfo, schema) => {
-		return new Promise((resolve, reject) => {
-			switchModel(schema).findByIdAndUpdate(id, {dataSource: updateInfo}, (err, res) => {
-				if (err) {
-					console.log(`服务器出错${err}`)
-					reject('fail')
-				} else {
-					resolve('done')
-				}
-			})
-		})
-	},
-
-	/**
-	 * 更新
-	 */
-	findOneAndUpdate: (oldCondition, newCondition, schema) => {
-		return new Promise((resolve, reject) => {
-			switchModel(schema).findOneAndUpdate(JSON.parse(oldCondition), newCondition, (err, res) => {
-				if (err) {
-					console.log('服务器出错')
-					reject('fail')
-				} else {
-					console.log(res, '更新成功')
-					resolve('done')
+					console.log('插入：', res)
+					utils.insertData(info, schema)
+					.then((res) => {
+						resolve('update ok')
+					})
+					.catch((err) => {
+						reject(err)
+					})
 				}
 			})
 		})
 	}
 }
-
 module.exports = utils

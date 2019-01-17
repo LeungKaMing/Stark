@@ -5,6 +5,14 @@
 const models = require('../models/index')
 
 const resultObj = {
+    getActivityList: async (params) => {
+        const modelResult = await models[params.url](params.data)
+        return {
+            code: 200,
+            data: modelResult,
+            msg: params.msg
+        }
+    },
     getDraftList: async (params) => {
         const modelResult = await models[params.url](params.data)
         return {

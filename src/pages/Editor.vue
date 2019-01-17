@@ -85,102 +85,19 @@
 </style>
 
 <script>
-  import {getDraftList, saveActivity, publishActivity} from '../assets/scripts/api'
+  import {getActivityList, getDraftList, saveActivity, publishActivity} from '../assets/scripts/api'
   import {getQueryString} from '../assets/scripts/utils'
   import draggable from 'vuedraggable'
   const nanoid = require('nanoid')
 
   // mock datasource of current activity
-  window.datasource = {
-    global: {},
-    layers: {},
-    pages: {},
-    events: {},
-    compons: [
-      {
-        id: nanoid(),
-        name: 'button',
-        data: {
-            style: {
-              width: '100%',
-              height: '100px',
-              backgroundColor: 'blue',
-              fontSize: '12px',
-              textAlign: 'center',
-              border: '',
-              borderRadius: '',
-              icon: '',
-              float: '',
-            },
-            props: {
-              text: 'I am button.'
-            }
-        }
-      },
-      {
-        id: nanoid(),
-        name: 'image',
-        data: {
-            style: {
-              width: '100%',
-              height: '100px',
-              backgroundColor: 'green',
-              fontSize: '12px'
-            },
-            props: {
-              imgSrc: 'https://avatars3.githubusercontent.com/u/18412359?s=40&v=4'
-            }
-        }
-      },
-      {
-        id: nanoid(),
-        name: 'text',
-        data: {
-            style: {
-              width: '100%',
-              height: '100px',
-              lineHeight: '100px',
-              backgroundColor: 'green',
-              fontSize: '12px',
-              textAlign: 'center'
-            },
-            props: {
-              text: 'I am text.'
-            }
-        }
-      },
-      {
-        id: nanoid(),
-        name: 'container',
-        data: {
-            compons: [
-              {
-                id: nanoid(),
-                name: 'button',
-                data: {
-                  style: {
-                    display: 'block',
-                    width: '100%',
-                    height: '100px',
-                    backgroundColor: 'pink',
-                    fontSize: '12px',
-                    color: '#fff'
-                  },
-                  props: {
-                    text: 'I am inner button.'
-                  }
-                }
-              }
-            ]
-        }
-      }
-    ]
-  }
+  window.datasource = {}
 
   // 这个插件很好用，只要把全局的变量跟拖拽的绑定了，那么只要拖拽顺序改变，也会同步到全局的变量
   export default {
     data () {
       return {
+        activityId: '',
         // 左侧菜单
         initMenuList: [],
         menuList: [
@@ -264,13 +181,46 @@
       TextPannel: () => import('../components/TextPannel')
     },
     created () {
+      const {type} = this.$route.query
+      type === 'add' ? this.$data.activityId = nanoid() : ''
       this.$data.initMenuList = this.$data.menuList // 临时存放菜单项，用于从菜单拖拉到舞台时，及时补充菜单项
-      this.$data.contentList = window.datasource.compons  // 初始化渲染舞台
+      if (this.$route.query.type === 'edit') {
+        this.init()
+      } else {
+        window.datasource.compons = this.$data.contentList = []
+      }
     },
     methods: {
+      // 初始化
+      init () {
+        const self = this
+        const {activityId} = this.$route.query
+        getActivityList({
+          data: {
+            activityId
+          },
+          onSuccess (res) {
+            self.$data.contentList = res.data[0].dataSource.compons // 初始化渲染舞台
+            window.datasource.compons = self.$data.contentList  // 同步接口数据到window.datasource
+          },
+          onFailure (err) {
+            console.log(err)
+          }
+        })
+      },
       handleDraft () {
+        const self = this
+        const {activityId} = this.$data
         getDraftList({
-          activityId: getQueryString().activityId
+          data: {
+            activityId
+          },
+          onSuccess (res) {
+            console.log(res)
+          },
+          onFailure (err) {
+            console.log(err)
+          }
         })
         .then((res) => {
           console.log(res, '<<<<<getDraftList')
@@ -279,9 +229,19 @@
         })
       },
       handleSave () {
+        const self = this
+        const {activityId} = this.$data
         saveActivity({
-          activityId: getQueryString().activityId,
-          dataSource: JSON.stringify(window.datasource)
+          data: {
+            activityId,
+            dataSource: JSON.stringify(window.datasource)
+          },
+          onSuccess (res) {
+            console.log(res)
+          },
+          onFailure (err) {
+            console.log(err)
+          }
         }).then((res) => {
           console.log(res, '<<<<<saveActivity')
         }).catch((err) => {
@@ -289,9 +249,19 @@
         })
       },
       handlePublish () {
+        const self = this
+        const {activityId} = this.$data
         publishActivity({
-          activityId: getQueryString().activityId,
-          dataSource: JSON.stringify(window.datasource)
+          data: {
+            activityId,
+            dataSource: JSON.stringify(window.datasource)
+          },
+          onSuccess (res) {
+            console.log(res)
+          },
+          onFailure (err) {
+            console.log(err)
+          }
         }).then((res) => {
           console.log(res, '<<<<<publishActivity')
         }).catch((err) => {

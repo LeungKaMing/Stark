@@ -4,6 +4,24 @@ const querystring = require('querystring');
 module.exports = async (req, res) => {
 	if (req.method === 'OPTIONS') {
 		res.end('ok')
+	} else if (/\/v1\/getActivityList/ig.test(req.url)) {
+		// 获取草稿列表
+		let urlObj = req.url.replace(/\/v1\/getActivityList\?(activityId=\w+)/ig, '$1').split('=')
+		let data
+		if (urlObj.length === 1) {
+			data = {}
+		} else {
+			data = {[urlObj[0]]: urlObj[1]}
+		}
+		const controllResult = await controllers( 
+			{
+				method: req.method,	// 接口请求方法，restfulAPI
+				msg: '获取活动列表',	// 接口描述
+				url: req.url.split('?')[0].replace(/\/v1\//, ''),	// 请求地址
+				data	// 请求数据
+			}
+		)
+		res.end(JSON.stringify(controllResult))
 	} else if (/\/v1\/getDraftList\?(activityId=\w+)/ig.test(req.url)) {
 		// 获取草稿列表
 		let urlObj = req.url.replace(/\/v1\/getDraftList\?(activityId=\w+)/ig, '$1')
