@@ -51,6 +51,7 @@
         data: {},
         onSuccess (res) {
           res.data.map((item) => {
+            console.log(item, 111)
             temp.push({
               activityId: item.activityId,
               name: item.dataSource.global.name,

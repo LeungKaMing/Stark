@@ -91,7 +91,13 @@
   const nanoid = require('nanoid')
 
   // mock datasource of current activity
-  window.datasource = {}
+  window.datasource = {
+    global: {},
+    layers: {},
+    pages: {},
+    events: {},
+    compons: []
+  }
 
   // 这个插件很好用，只要把全局的变量跟拖拽的绑定了，那么只要拖拽顺序改变，也会同步到全局的变量
   export default {
@@ -182,31 +188,32 @@
     },
     created () {
       const {type} = this.$route.query
-      type === 'add' ? this.$data.activityId = nanoid() : ''
+      type === 'add' ? this.$data.activityId = nanoid() : ''  // 新增活动才需要创建活动id；编辑活动的时候读取数据库的已有id
       this.$data.initMenuList = this.$data.menuList // 临时存放菜单项，用于从菜单拖拉到舞台时，及时补充菜单项
-      if (this.$route.query.type === 'edit') {
-        this.init()
-      } else {
-        window.datasource.compons = this.$data.contentList = []
-      }
+      this.init()
     },
     methods: {
       // 初始化
       init () {
         const self = this
-        const {activityId} = this.$route.query
-        getActivityList({
-          data: {
-            activityId
-          },
-          onSuccess (res) {
-            self.$data.contentList = res.data[0].dataSource.compons // 初始化渲染舞台
-            window.datasource.compons = self.$data.contentList  // 同步接口数据到window.datasource
-          },
-          onFailure (err) {
-            console.log(err)
-          }
-        })
+        const {activityId, type} = self.$route.query
+        if (type === 'edit') {
+          // 编辑活动
+          getActivityList({
+            data: {
+              activityId
+            },
+            onSuccess (res) {
+              window.datasource.compons = self.$data.contentList = res.data[0].dataSource.compons // 初始化渲染舞台，同步接口数据到window.datasource => 因为后续为了方便写逻辑好多都是直接从全局window拿数据源
+            },
+            onFailure (err) {
+              console.log(err)
+            }
+          })
+        } else {
+          // 新建活动
+          window.datasource.compons = self.$data.contentList = [] // 初始化渲染舞台，同步接口数据到window.datasource => 因为后续为了方便写逻辑好多都是直接从全局window拿数据源
+        }
       },
       handleDraft () {
         const self = this

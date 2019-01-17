@@ -17,18 +17,6 @@ function switchModel (schema) {
 
 const utils = {
 	/**
-	 * test
-	 */
-	test: (info, schema) => {
-		switchModel(schema)({activityId: nanoid(), dataSource: info}).save((err, res) => {
-			if (err) {
-				console.log(`插入数据错误:${err}`)
-			} else {
-				console.log(`插入数据成功:${res}`)
-			}
-		})
-	},
-	/**
 	 * 插入
 	 */
 	insertData: (info, schema) => {
@@ -97,12 +85,17 @@ const utils = {
 			}, schema)
 			.then((res) => {
 				if (res.length) {
-					console.log('更新：', res)
+					switchModel(schema).findOneAndUpdate({activityId: info.activityId} , {dataSource: info.dataSource}, (err, res) => {
+						if (err) {
+							reject('更新数据失败')
+						} else {
+							resolve('更新数据成功')
+						}
+					})
 				} else {
-					console.log('插入：', res)
 					utils.insertData(info, schema)
 					.then((res) => {
-						resolve('update ok')
+						resolve('插入成功')
 					})
 					.catch((err) => {
 						reject(err)
