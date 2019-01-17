@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <el-container>
-      <el-aside style="width: 200px; min-height: 500px; background-color: aquamarine;">
+      <el-aside style="width: 200px; min-height: 500px; box-shadow: 0 0 20px 0px pink;">
         <div class="per_menu">
           <router-link to="/list">Go to list</router-link>
         </div>
@@ -20,7 +20,7 @@
 <style scoped>
   .per_menu {
     padding-bottom: 15px;
-    background-color: aquamarine;
+    background: #c0c0c01c;
   }
 </style>
 

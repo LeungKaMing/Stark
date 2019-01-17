@@ -3,7 +3,7 @@
 const dbUtils = require('../database/index.js')
 const resultObj = {
     getDraftList: async (params) => {
-        return await dbUtils.find(params.activityId, 'activity')
+        return await dbUtils.find({activityId: params.activityId}, 'activity')
     },
     saveActivity: async (params) => {
         return await dbUtils.findByIdAndUpdate(params.activityId, params.dataSource, 'activity')
