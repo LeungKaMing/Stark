@@ -69,6 +69,8 @@
     max-width: 500px; 
     width: 500px;
     height: 500px;
+    border: 1px dotted pink;
+    box-shadow: pink 0px 0px 20px 0px;
     overflow: scroll;
   }
   .stage__bar--btn {
