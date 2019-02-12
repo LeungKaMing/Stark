@@ -1,12 +1,12 @@
-import React from "react";
-import {hydrate} from 'react-dom'
+import React from 'react';
+import {hydrate} from 'react-dom'   // react16以后用hydrate来代替render，用于支持ssr
 import {renderToString} from 'react-dom/server'
 import {StaticRouter, BrowserRouter} from 'react-router-dom'
 
 export function markup (url = '') {
     if (url) {
         return renderToString(
-            <StaticRouter context={{}} location={url}>
+            <StaticRouter>
                 <div>server</div>
             </StaticRouter>
         )
