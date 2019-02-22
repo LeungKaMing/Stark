@@ -1,5 +1,4 @@
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const ModuleConcatenationPlugin = require('webpack/lib/optimize/ModuleConcatenationPlugin');
 const webpack = require('webpack')
@@ -70,7 +69,6 @@ module.exports = {
 				'window.l': 'lodash'
 			}), // 让全局能直接访问lodash实例【跟分块并没关系！只是给全局提供更简便的方式！】
 			new ExtractTextPlugin('[name].[hash].css'),
-			new HtmlWebpackPlugin({title: process.env.NODE_ENV === 'production' ? 'webpack(prod)' : 'webpack(dev)',template: path.resolve(__dirname, '../src/template/react.html'),filename: path.resolve(__dirname, '../dist/react.html'), minify: true,showErrors: true, chunks: ['common', 'vendors', 'reactEntry']}),
 			new webpack.HotModuleReplacementPlugin(),
 			new webpack.NamedModulesPlugin(),
 			new webpack.DefinePlugin({

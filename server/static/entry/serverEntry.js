@@ -4,5 +4,5 @@ require('babel-polyfill')
 require('babel-register')({
     presets: [ 'env' ]
 })
-const App = require('../pages/App')
+const App = require('../common/App')
 module.exports = App

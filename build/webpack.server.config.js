@@ -4,7 +4,7 @@ const merge = require('webpack-merge');
 const nodeExternals = require('webpack-node-externals')
 
 const baseConfig = require('./webpack.base.config')
-baseConfig.entry = {ssrServerEntry: path.resolve(__dirname, '../src/entry/reactServerEntry.js')}
+baseConfig.entry = {ssrServerEntry: path.resolve(__dirname, '../server/static/entry/serverEntry.js')}
 baseConfig.output.libraryTarget = 'commonjs2'
 baseConfig.optimization = {}  // 根据官方文档记载，服务端如果设置分块会报错，客户端才能设置分块
 

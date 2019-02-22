@@ -10,8 +10,9 @@ const server = http.createServer((req, res) => {
 	res.setHeader("Access-Control-Allow-Headers","*");
 	// 路由模块统一处理，按mvc架构划分
 	if (req.url === '/demo.html') {
-		const dom = require('./static/entry/serverEntry')	// react服务端代码用es6需要在这里处理
-		const markup = dom.markup(req.url)
+		const ssrObj = require('./static/entry/serverEntry')	// react服务端代码用es6需要在这里处理
+		const dom = ssrObj.inital(req.url).dom
+		const store = ssrObj.inital(req.url).store
 		res.setHeader("Content-Type","text/html;charset=utf-8");
 		res.end(`
 			<!DOCTYPE html>
@@ -19,7 +20,8 @@ const server = http.createServer((req, res) => {
 					<title>React & React Router4 SSR</title>
 				</head>
 				<body>
-				<div id="root">${markup}</div>
+				<div id="root">${dom}</div>
+				window.__PRELOADED_STATE__ = ${JSON.stringify(store)}
 				</body>
 			</html>
 		`);	
