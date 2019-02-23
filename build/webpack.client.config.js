@@ -3,7 +3,7 @@ const webpack = require('webpack');
 const merge = require('webpack-merge');
 
 const baseConfig = require('./webpack.base.config')
-baseConfig.entry = {ssrClientEntry: path.resolve(__dirname, '../src/entry/reactClientEntry.js')}
+baseConfig.entry = {ssrClientEntry: path.resolve(__dirname, '../server/static/entry/clientEntry.js')}
 
 module.exports = merge(baseConfig, {
   devtool: 'source-map',
