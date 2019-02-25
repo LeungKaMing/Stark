@@ -6,12 +6,13 @@ const { VueLoaderPlugin } = require('vue-loader')
 
 module.exports = (options = {}) => ({
   entry: {
-    vendor: './src/vendor',
     index: './src/main.js'
   },
 	mode: 'development',
   devServer: {
-    contentBase: './dist'
+    contentBase: './dist',
+    hot: true,
+    overlay: true
   },
   output: {
     path: resolve(__dirname, 'dist'),
@@ -73,14 +74,14 @@ module.exports = (options = {}) => ({
     }
   },
   plugins: [
+    new webpack.HotModuleReplacementPlugin(),
     new VueLoaderPlugin(),
     new HtmlWebpackPlugin({
       template: resolve(__dirname, '../src/index.html'),
       filename: 'index.html',
       inject: true,
       hash: true,
-      showErrors: true,
-      chunks: ['vendor', 'common']
+      showErrors: true
     })
   ],
   resolve: {

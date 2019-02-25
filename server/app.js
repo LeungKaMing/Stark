@@ -21,7 +21,7 @@ const server = http.createServer((req, res) => {
 				</head>
 				<body>
 				<div id="root">${dom}</div>
-				window.__PRELOADED_STATE__ = ${JSON.stringify(store)}
+				<script>window.__PRELOADED_STATE__ = ${JSON.stringify(store)}</script>
 				</body>
 			</html>
 		`);	

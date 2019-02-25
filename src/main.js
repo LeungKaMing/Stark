@@ -1,6 +1,6 @@
 import Vue from 'vue'
+import ElementUI from 'element-ui'
 import VueRouter from 'vue-router'
-// import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import { Button, Notification, Container, Header, Aside, Main, Form, FormItem, Input, Select, Option, Radio, RadioGroup, Switch, ButtonGroup, Table, TableColumn } from 'element-ui';
 import App from './App.vue'

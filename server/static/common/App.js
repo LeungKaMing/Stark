@@ -7,15 +7,15 @@ import {StaticRouter, BrowserRouter} from 'react-router-dom'
 // store
 import { createStore } from 'redux'
 import { Provider } from 'react-redux'
-import todoApp from './reducers'
+import * as reducers from '../store/reducers'
 
 export function inital (url = '') {
-    const serverStore = createStore(todoApp)
+    const serverStore = createStore(reducers.counter)
     if (url) {
         return {
             dom: renderToString(
                 <Provider store={serverStore}>
-                    <StaticRouter location={url}>
+                    <StaticRouter location={url} context={{demo: 'hello'}}>
                         <div>server</div>
                     </StaticRouter>
                 </Provider>
@@ -23,7 +23,7 @@ export function inital (url = '') {
             store: serverStore.getState()
         }
     } else {
-        const clientStore = createStore(todoApp, window.__PRELOADED_STATE__)
+        const clientStore = createStore(reducers.counter, window.__PRELOADED_STATE__)
         delete window.__PRELOADED_STATE__
 
         return {
