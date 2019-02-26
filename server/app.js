@@ -9,7 +9,13 @@ const server = http.createServer((req, res) => {
 	res.setHeader("Access-Control-Allow-Origin","*");
 	res.setHeader("Access-Control-Allow-Headers","*");
 	// 路由模块统一处理，按mvc架构划分
-	if (req.url === '/demo.html') {
+	if (req.url === '/server') {
+		// 开启服务
+		// 解决相应数据中文乱码
+		res.setHeader("Content-Type","application/json;charset=utf-8");
+		routes(req, res)
+	} else {
+		// ssr
 		const ssrObj = require('./static/entry/serverEntry')	// react服务端代码用es6需要在这里处理
 		const dom = ssrObj.inital(req.url).dom
 		const store = ssrObj.inital(req.url).store
@@ -24,11 +30,7 @@ const server = http.createServer((req, res) => {
 				<script>window.__PRELOADED_STATE__ = ${JSON.stringify(store)}</script>
 				</body>
 			</html>
-		`);	
-	} else {
-		// 解决相应数据中文乱码
-		res.setHeader("Content-Type","application/json;charset=utf-8");
-		routes(req, res)
+		`);
 	}
 });
 server.listen(1234, () => {

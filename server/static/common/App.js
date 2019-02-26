@@ -3,11 +3,43 @@ import React from 'react';
 import {hydrate} from 'react-dom'   // react16以后用hydrate来代替render，用于支持ssr
 import {renderToString} from 'react-dom/server'
 // router
-import {StaticRouter, BrowserRouter} from 'react-router-dom'
+import {StaticRouter, BrowserRouter, Route, Link} from 'react-router-dom'
 // store
 import { createStore } from 'redux'
 import { Provider } from 'react-redux'
 import * as reducers from '../store/reducers'
+
+class ClientCommon extends React.Component {
+    constructor (props) {
+        super(props)
+    }
+    componentWillMount () {
+        console.log('in client')
+    }
+    goTo () {
+    }
+    render () {
+        return (
+            <div onClick={this.goTo.bind(this)}>client</div>
+        )
+    }
+}
+
+class ServerCommon extends React.Component {
+    constructor (props) {
+        super(props)
+    }
+    componentWillMount () {
+        console.log('in server')
+    }
+    goTo () {
+    }
+    render () {
+        return (
+            <div onClick={this.goTo.bind(this)}>server</div>
+        )
+    }
+}
 
 export function inital (url = '') {
     const serverStore = createStore(reducers.counter)
@@ -16,7 +48,12 @@ export function inital (url = '') {
             dom: renderToString(
                 <Provider store={serverStore}>
                     <StaticRouter location={url} context={{demo: 'hello'}}>
-                        <div>server</div>
+                        <div>
+                            <Link to="/">go default</Link>
+                            <Link to="/test">go test</Link>
+                            <Route path="/" component={ServerCommon}></Route>
+                            <Route path="/test" component={()=>(<div>test demo</div>)}></Route>
+                        </div>
                     </StaticRouter>
                 </Provider>
             ),
@@ -30,7 +67,12 @@ export function inital (url = '') {
             dom: hydrate(
                 <Provider store={clientStore}>
                     <BrowserRouter>
-                        <div>client</div>
+                        <div>
+                            <Link to="/">go default</Link>
+                            <Link to="/test">go test</Link>
+                            <Route path="/" component={ClientCommon}></Route>
+                            <Route path="/test" component={()=>(<div>test demo</div>)}></Route>
+                        </div>
                     </BrowserRouter>
                 </Provider>
                 , document.getElementById('app')
