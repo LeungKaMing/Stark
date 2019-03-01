@@ -47,15 +47,15 @@ module.exports = {
 					reuseExistingChunk: true, // 可设置是否重用该chunk
 					name: 'common',
 					enforce: true
-				},
-				// 第三方依赖抽离 - 既抽离入口模块，又抽离异步引入的模块
-				vendors: {
-					minChunks: 1, // 引用最少2次被引用或以上都要抽离
-					test: /[\\/]node_modules[\\/]/, 
-					priority: 10,
-					name: 'vendors',
-					enforce: true
 				}
+				// // 第三方依赖抽离 - 既抽离入口模块，又抽离异步引入的模块
+				// vendors: {
+				// 	minChunks: 1, // 引用最少2次被引用或以上都要抽离
+				// 	test: /[\\/]node_modules[\\/]/, 
+				// 	priority: 10,
+				// 	name: 'vendors',
+				// 	enforce: true
+				// }
 			}
 		}
 	},

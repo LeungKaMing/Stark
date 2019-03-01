@@ -6,8 +6,9 @@
   "scripts": {
     "dev": "webpack-dev-server --hot --config ./build/webpack.config.js",
     "build": "rimraf dist && webpack -p --progress --hide-modules",
-    "client": "rimraf dist && webpack --config ./build/webpack.client.config.js",
-    "server": "rimraf dist && webpack --config ./build/webpack.server.config.js"
+    "client": "webpack --config ./build/webpack.client.config.js",
+    "server": "webpack --config ./build/webpack.server.config.js",
+    "ssr": "rimraf dist && npm run client && npm run server"
   },
   "dependencies": {
     "axios": "^0.18.0",

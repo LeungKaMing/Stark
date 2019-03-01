@@ -1,82 +1,40 @@
 import React from 'react';
-// dom
-import {hydrate} from 'react-dom'   // react16以后用hydrate来代替render，用于支持ssr
-import {renderToString} from 'react-dom/server'
-// router
-import {StaticRouter, BrowserRouter, Route, Link} from 'react-router-dom'
-// store
-import { createStore } from 'redux'
-import { Provider } from 'react-redux'
-import * as reducers from '../store/reducers'
+import {Route, Link} from 'react-router-dom'
 
-class ClientCommon extends React.Component {
+class Text1 extends React.Component {
     constructor (props) {
         super(props)
     }
-    componentWillMount () {
-        console.log('in client')
-    }
-    goTo () {
-    }
     render () {
         return (
-            <div onClick={this.goTo.bind(this)}>client</div>
+            <div>i am text1.</div>
         )
     }
 }
 
-class ServerCommon extends React.Component {
-    constructor (props) {
-        super(props)
-    }
-    componentWillMount () {
-        console.log('in server')
-    }
-    goTo () {
-    }
+class Text2 extends React.Component {
     render () {
         return (
-            <div onClick={this.goTo.bind(this)}>server</div>
+            <div>i am text2.</div>
         )
     }
 }
 
-export function inital (url = '') {
-    const serverStore = createStore(reducers.counter)
-    if (url) {
-        return {
-            dom: renderToString(
-                <Provider store={serverStore}>
-                    <StaticRouter location={url} context={{demo: 'hello'}}>
-                        <div>
-                            <Link to="/">go default</Link>
-                            <Link to="/test">go test</Link>
-                            <Route path="/" component={ServerCommon}></Route>
-                            <Route path="/test" component={()=>(<div>test demo</div>)}></Route>
-                        </div>
-                    </StaticRouter>
-                </Provider>
-            ),
-            store: serverStore.getState()
-        }
-    } else {
-        const clientStore = createStore(reducers.counter, window.__PRELOADED_STATE__)
-        delete window.__PRELOADED_STATE__
-
-        return {
-            dom: hydrate(
-                <Provider store={clientStore}>
-                    <BrowserRouter>
-                        <div>
-                            <Link to="/">go default</Link>
-                            <Link to="/test">go test</Link>
-                            <Route path="/" component={ClientCommon}></Route>
-                            <Route path="/test" component={()=>(<div>test demo</div>)}></Route>
-                        </div>
-                    </BrowserRouter>
-                </Provider>
-                , document.getElementById('app')
-            )
-        }
+export class App extends React.Component {
+    constructor (props) {
+        super(props)
+    }
+    componentDidMount () {
+        console.log(this.props, '<<<<<<<')
+    }
+    render () {
+        return (
+            <div>
+                <Link to="/text1">go text1</Link>
+                <Link to="/text2">go text2</Link>
+                <Route path="/text1" component={Text1}></Route>
+                <Route path="/text2" component={Text2}></Route>
+            </div>
+        )
     }
 }

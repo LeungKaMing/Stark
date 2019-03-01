@@ -10,7 +10,6 @@ baseConfig.optimization = {}  // 根据官方文档记载，服务端如果设�
 
 module.exports = merge(baseConfig, {
   target: 'node',
-  devtool: 'source-map',
   mode: 'development',
   resolve: {},
   externals: nodeExternals({

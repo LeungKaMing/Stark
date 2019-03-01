@@ -1,14 +1,21 @@
 const path = require('path');
 const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 const merge = require('webpack-merge');
 
 const baseConfig = require('./webpack.base.config')
 baseConfig.entry = {ssrClientEntry: path.resolve(__dirname, '../server/static/entry/clientEntry.js')}
 
 module.exports = merge(baseConfig, {
-  devtool: 'source-map',
   mode: 'development',
   plugins: [
+    new HtmlWebpackPlugin({
+      template: path.resolve(__dirname, '../src/index.html'),
+      filename: 'index.html',
+      inject: true,
+      hash: true,
+      showErrors: true
+    }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NamedModulesPlugin(),
     new webpack.DefinePlugin({
