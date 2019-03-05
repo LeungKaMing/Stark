@@ -37,12 +37,13 @@ const server = http.createServer((req, res) => {
 		// const title = ssrObj.inital('server').title
 		res.setHeader("Content-Type","text/html;charset=utf-8");
 		res.end(`
+			<!DOCTYPE html>
 			<html>
 				<head>
 					<title>React & React Router4 SSR</title>
 				</head>
 				<body>
-					<p>服务端模板</p>
+					<p>服务端模板【服务端的脚本都插在root里面了】</p>
 					<div id="root">${dom}</div>
 					<script>window.__PRELOADED_STATE__ = ${JSON.stringify(store)}</script>
 					<!-- 与客户端js打通 -->
