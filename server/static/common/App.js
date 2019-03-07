@@ -30,15 +30,10 @@ export class App extends React.Component {
     render () {
         return (
             <div>
-
-                {/* 
-                存在这段代码会导致控制台报错：react-dom.development.js:506 Warning: Expected server HTML to contain a matching <div> in <div>.
                 <Link to="/text1">go text1</Link>
                 <Link to="/text2">go text2</Link>
                 <Route path="/text1" component={Text1}></Route>
                 <Route path="/text2" component={Text2}></Route> 
-                */}
-                123
             </div>
         )
     }

@@ -32,8 +32,8 @@ const server = http.createServer((req, res) => {
 	} else {
 		// ssr
 		const ssrObj = require('./static/entry/serverEntry')	// react服务端代码用es6需要在这里处理
-		const dom = ssrObj.inital('server').dom
-		const store = ssrObj.inital('server').store
+		const dom = ssrObj.inital('server', req.url).dom
+		const store = ssrObj.inital('server', req.url).store
 		// const title = ssrObj.inital('server').title
 		res.setHeader("Content-Type","text/html;charset=utf-8");
 		res.end(`

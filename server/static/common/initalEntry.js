@@ -10,20 +10,21 @@ import { Provider } from 'react-redux'
 import * as reducers from '../store/reducers'
 import { App } from './App'
 
-export function inital (url = '') {
-    if (url === 'server') {
+export function inital (type, url = '') {
+    if (type === 'server') {
         const serverStore = createStore(reducers.counter)
         return {
             dom: renderToString(
                 <Provider store={serverStore}>
+                    {/* 之前提示的：存在这段代码会导致控制台报错：react-dom.development.js:506 Warning: Expected server HTML to contain a matching <div> in <div>. 是因为location传入的值跟实际nodejs接收的请求url不一致导致的 */}
                     <StaticRouter location={url} context={{}}>
-                        <App type={url} />
+                        <App />
                     </StaticRouter>
                 </Provider>
             ),
             store: serverStore
         }
-    } else if (url === 'client') {
+    } else if (type === 'client') {
         const clientStore = createStore(reducers.counter, window.__PRELOADED_STATE__)
         delete window.__PRELOADED_STATE__
 
@@ -31,7 +32,7 @@ export function inital (url = '') {
             dom: hydrate(
                 <Provider store={clientStore}>
                     <BrowserRouter>
-                        <App type={url} />
+                        <App />
                     </BrowserRouter>
                 </Provider>
                 , document.getElementById('root')
