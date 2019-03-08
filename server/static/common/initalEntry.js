@@ -8,7 +8,7 @@ import {StaticRouter, BrowserRouter} from 'react-router-dom'
 import { createStore } from 'redux'
 import { Provider } from 'react-redux'
 import * as reducers from '../store/reducers'
-import { App } from './App'
+import App from './App'
 
 export function inital (type, url = '') {
     if (type === 'server') {

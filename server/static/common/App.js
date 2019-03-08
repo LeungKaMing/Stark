@@ -1,31 +1,48 @@
 import React from 'react';
 import {Route, Link} from 'react-router-dom'
+import { connect } from 'react-redux'
 
-class Text1 extends React.Component {
-    constructor (props) {
-        super(props)
-    }
-    render () {
-        return (
-            <div>i am text1.</div>
-        )
+const mapStateToProps = state => {
+    return {
+        num: state.num
     }
 }
 
-class Text2 extends React.Component {
-    render () {
-        return (
-            <div>i am text2.</div>
-        )
-    }
-}
-
-export class App extends React.Component {
+class Text1Container extends React.Component {
     constructor (props) {
         super(props)
     }
     componentDidMount () {
-        console.log(this.props, '<<<<<<<')
+        console.log(this.props, 'in text1')
+    }
+    render () {
+        return (
+            <div>i am text{this.props.num + 1}.</div>
+        )
+    }
+}
+class Text2Container extends React.Component {
+    constructor (props) {
+        super(props)
+    }
+    componentDidMount () {
+        console.log(this.props, 'in text2')
+    }
+    render () {
+        return (
+            <div>i am text{this.props.num + 2}.</div>
+        )
+    }
+}
+
+const Text1 = connect(mapStateToProps)(Text1Container)
+const Text2 = connect(mapStateToProps)(Text2Container)
+
+class App extends React.Component {
+    constructor (props) {
+        super(props)
+    }
+    componentDidMount () {
     }
     render () {
         return (
@@ -38,3 +55,5 @@ export class App extends React.Component {
         )
     }
 }
+
+export default App

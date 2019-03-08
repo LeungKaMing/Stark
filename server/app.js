@@ -45,7 +45,7 @@ const server = http.createServer((req, res) => {
 				<body>
 					<p>服务端模板【服务端的脚本都插在root里面了】</p>
 					<div id="root">${dom}</div>
-					<script>window.__PRELOADED_STATE__ = ${JSON.stringify(store)}</script>
+					<script>window.__PRELOADED_STATE__ = ${JSON.stringify(store.getState())}</script>
 					<!-- 与客户端js打通 -->
 					${scriptsTag}
 				</body>
