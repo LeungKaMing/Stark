@@ -14,7 +14,7 @@ module.exports = {
         rootValue: 75,
         unitPrecision: 5,
         propList: ['*'],  // propList: ['!width*'] 以下写法亲测不对width属性做转换
-        selectorBlackList: [],
+        selectorBlackList: ['el'],
         replace: true,
         mediaQuery: false,
         minPixelValue: 6
