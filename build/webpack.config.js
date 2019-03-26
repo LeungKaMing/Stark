@@ -1,3 +1,4 @@
+const webpack = require('webpack')
 const resolve = require('path').resolve
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const url = require('url')
