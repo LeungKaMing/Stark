@@ -2,7 +2,7 @@ import Vue from 'vue'
 import ElementUI from 'element-ui'
 import VueRouter from 'vue-router'
 import 'element-ui/lib/theme-chalk/index.css'
-import { Button, Notification, Container, Header, Aside, Main, Form, FormItem, Input, Select, Option, Radio, RadioGroup, Switch, ButtonGroup, Table, TableColumn } from 'element-ui';
+import { Button, Notification, Container, Dialog, Header, Aside, Main, Form, FormItem, Input, Select, Option, Radio, RadioGroup, Switch, ButtonGroup, Table, TableColumn } from 'element-ui';
 import App from './App.vue'
 
 import './assets/css/common.css'
@@ -15,6 +15,7 @@ Vue.use(VueRouter)
 Vue.use(ButtonGroup)
 Vue.use(Button)
 Vue.use(Container)
+Vue.use(Dialog)
 Vue.use(Header)
 Vue.use(Aside)
 Vue.use(Main)

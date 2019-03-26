@@ -24,7 +24,7 @@ const server = http.createServer((req, res) => {
 		res.end(result)
 	} else if (req.url === '/favicon.ico') {
 		return false
-	} else if (req.url === '/services') {
+	} else if (/v1/ig.test(req.url)) {
 		// 开启服务
 		// 解决相应数据中文乱码
 		res.setHeader("Content-Type","application/json;charset=utf-8");

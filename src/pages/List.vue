@@ -51,12 +51,11 @@
         data: {},
         onSuccess (res) {
           res.data.map((item) => {
-            console.log(item, 111)
             temp.push({
               activityId: item.activityId,
-              name: item.dataSource.global.name,
-              onlineTime: item.dataSource.global.onlineTime,
-              offlineTime: item.dataSource.global.offlineTime
+              name: JSON.parse(item.dataSource).global.name,
+              onlineTime: JSON.parse(item.dataSource).global.onlineTime,
+              offlineTime: JSON.parse(item.dataSource).global.offlineTime
             })
           })
           self.$data.tableData = temp
@@ -78,7 +77,6 @@
         }
       },
       handleEdit(index, row) {
-        console.log(index, row);
         const {activityId} = row
         this.$router.push({
           path: '/editor',

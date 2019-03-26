@@ -1,6 +1,12 @@
 <template>
   <div class="editor__area">
-    <el-header style="display: flex; justify-content: flex-end; padding: 0;">
+    <el-header style="display: flex; justify-content: space-between; padding: 0;">
+      <!-- 设置开始 -->
+      <el-button-group style="">
+        <el-button type="primary" icon="el-icon-setting" @click="handleGlobalConfig">全局配置</el-button>
+        <el-button type="primary" icon="el-icon-document" @click="handleEventConfig">事件配置</el-button>
+      </el-button-group>
+      <!-- 设置结束 -->
       <!-- 设置开始 -->
       <el-button-group style="">
         <el-button type="primary" icon="el-icon-printer" @click="handleDraft">草稿</el-button>
@@ -37,6 +43,32 @@
         <component :is="`${curComponItem.name}Pannel`" :pannelData="curComponItem"></component>
       </div>
       <!-- 面板结束 -->
+      <!-- 全局配置开始 -->
+      <el-dialog
+        title="提示"
+        :visible.sync="globalConfigVisible"
+        width="30%"
+        :before-close="handleSettingsClose">
+          <span>这是一段信息</span>
+          <span slot="footer" class="dialog-footer">
+              <el-button @click="globalConfigVisible = false">取 消</el-button>
+              <el-button type="primary" @click="globalConfigVisible = false">确 定</el-button>
+          </span>
+      </el-dialog>
+      <!-- 全局配置结束 -->
+      <!-- 事件配置开始 -->
+      <el-dialog
+        title="提示"
+        :visible.sync="eventConfigVisible"
+        width="30%"
+        :before-close="handleSettingsClose">
+          <span>这是一段信息</span>
+          <span slot="footer" class="dialog-footer">
+              <el-button @click="eventConfigVisible = false">取 消</el-button>
+              <el-button type="primary" @click="eventConfigVisible = false">确 定</el-button>
+          </span>
+      </el-dialog>
+      <!-- 事件配置结束 -->
     </el-container>
   </div>
 </template>
@@ -173,7 +205,11 @@
         contentList: [],
         // 右侧属性面版
         panelSwitch: false,
-        curComponItem: {}
+        curComponItem: {},
+        // 全局配置对话框开关
+        globalConfigVisible: false,
+        // 事件配置对话框开关
+        eventConfigVisible: false
       }
     },
     components: {
@@ -206,7 +242,7 @@
               activityId
             },
             onSuccess (res) {
-              window.datasource.compons = self.$data.contentList = res.data[0].dataSource.compons // 初始化渲染舞台，同步接口数据到window.datasource => 因为后续为了方便写逻辑好多都是直接从全局window拿数据源
+              window.datasource.compons = self.$data.contentList = JSON.parse(res.data[0].dataSource).compons // 初始化渲染舞台，同步接口数据到window.datasource => 因为后续为了方便写逻辑好多都是直接从全局window拿数据源
             },
             onFailure (err) {
               console.log(err)
@@ -216,6 +252,12 @@
           // 新建活动
           window.datasource.compons = self.$data.contentList = [] // 初始化渲染舞台，同步接口数据到window.datasource => 因为后续为了方便写逻辑好多都是直接从全局window拿数据源
         }
+      },
+      handleGlobalConfig () {
+        this.$data.globalConfigVisible = true
+      },
+      handleEventConfig () {
+        this.$data.eventConfigVisible = true
       },
       handleDraft () {
         const self = this
@@ -322,6 +364,13 @@
             self.$data.curComponItem = {...curElement}
           }
         })
+      },
+      handleSettingsClose(done) {
+        this.$confirm('确认关闭？')
+          .then(_ => {
+            done();
+          })
+          .catch(_ => {});
       }
     }
   }
