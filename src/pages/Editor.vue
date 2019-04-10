@@ -47,9 +47,9 @@
       <el-dialog
         title="提示"
         :visible.sync="globalConfigVisible"
-        width="30%"
-        :before-close="handleSettingsClose">
-          <span>这是一段信息</span>
+        width="30%">
+          <span slot="title">title</span>
+          <span>这是全局配置信息</span>
           <span slot="footer" class="dialog-footer">
               <el-button @click="globalConfigVisible = false">取 消</el-button>
               <el-button type="primary" @click="globalConfigVisible = false">确 定</el-button>
@@ -60,9 +60,8 @@
       <el-dialog
         title="提示"
         :visible.sync="eventConfigVisible"
-        width="30%"
-        :before-close="handleSettingsClose">
-          <span>这是一段信息</span>
+        width="30%">
+          <span>这是事件配置信息</span>
           <span slot="footer" class="dialog-footer">
               <el-button @click="eventConfigVisible = false">取 消</el-button>
               <el-button type="primary" @click="eventConfigVisible = false">确 定</el-button>
@@ -235,6 +234,7 @@
       init () {
         const self = this
         const {activityId, type} = self.$route.query
+        self.$data.activityId = activityId
         if (type === 'edit') {
           // 编辑活动
           getActivityList({
@@ -365,7 +365,14 @@
           }
         })
       },
-      handleSettingsClose(done) {
+      handleSettingsClose (done) {
+        this.$confirm('确认关闭？')
+          .then(_ => {
+            done();
+          })
+          .catch(_ => {});
+      },
+      handleEventClose (done) {
         this.$confirm('确认关闭？')
           .then(_ => {
             done();

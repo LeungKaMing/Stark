@@ -80,6 +80,7 @@ const utils = {
 	 */
 	findByIdAndUpdate: (info, schema) => {
 		return new Promise((resolve, reject) => {
+			console.log(info.activityId, '<<<<<save trigger')
 			utils.find({
 				activityId: info.activityId
 			}, schema)

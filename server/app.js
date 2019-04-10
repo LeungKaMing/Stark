@@ -3,8 +3,8 @@ const fs = require('fs')
 const path = require('path')
 const routes = require('./routes/index')
 
-const demo = require('./demo')
-const clientScripts = demo('Client')
+const tool4SSR = require('./tool4SSR')
+const clientScripts = tool4SSR('Client')
 let scriptsTag = ''
 clientScripts.map((script) => {
 	scriptsTag += `<script src=${script}></script>`
